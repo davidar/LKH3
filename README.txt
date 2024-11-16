@@ -173,3 +173,14 @@ The data part:
 	DEPOT_SECTION
 	PICKUP_AND_DELIVERY_SECTION
 	TIME_WINDOW_SECTION
+
+DOCKER INSTRUCTIONS:
+--------------------
+
+To build the Docker image, run the following command in the root directory of the repository:
+
+    docker build -t lkh .
+
+To run the Docker container, use the following command:
+
+    docker run -v $(pwd):/app lkh pr2392.par

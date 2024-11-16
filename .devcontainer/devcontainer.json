@@ -1,0 +1,13 @@
+{
+  "name": "LKH3 Dev Container",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "runArgs": [
+    "--privileged"
+  ],
+  "tasks": {
+    "build": "make docker-build",
+    "launch": "make docker-run"
+  }
+}
