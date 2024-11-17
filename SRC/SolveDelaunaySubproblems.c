@@ -103,7 +103,7 @@ static int DelaunayClustering(int MaxClusterSize)
                 Count++;
         } while ((e = Next(e, u)) != e_start);
     }
-    assert(EdgeSet = (Edge *) malloc(Count * sizeof(Edge)));
+    EdgeSet = (Edge *) malloc(Count * sizeof(Edge));
     for (i = 0; i < Dimension; i++) {
         u = &p_array[i];
         e_start = e = u->entry_pt;
@@ -159,9 +159,8 @@ static int DelaunayClustering(int MaxClusterSize)
                 } while ((e = Next(e, u)) != e_start);
             }
             Count1 = Count;
-            assert(EdgeSet =
-                   (Edge *) realloc(EdgeSet,
-                                    (Count1 + Count2) * sizeof(Edge)));
+            EdgeSet = (Edge *) realloc(EdgeSet,
+                                       (Count1 + Count2) * sizeof(Edge));
             for (i = 0; i < Dimension; i++) {
                 u = &p_array[i];
                 e_start = e = u->entry_pt;

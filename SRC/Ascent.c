@@ -59,8 +59,8 @@ GainType Ascent()
     if (MaxCandidates > 0) {
         /* Generate symmetric candididate sets for all nodes */
         MaxAlpha = INT_MAX;
-        if (Optimum != MINUS_INFINITY
-            && (Alpha = Optimum * Precision - W) >= 0)
+        if (!OptimizePenalty && Optimum != MINUS_INFINITY &&
+            (Alpha = Optimum * Precision - W) >= 0)
             MaxAlpha = Alpha;
         if (CandidateSetType != DELAUNAY && CandidateSetType != POPMUSIC)
             GenerateCandidates(AscentCandidates, MaxAlpha, 1);
@@ -96,7 +96,10 @@ GainType Ascent()
         if (TraceLevel >= 2)
             printff
                 ("  T = %d, Period = %d, BestW = %0.1f, BestNorm = %d\n",
-                 T, Period, (double) BestW / Precision, BestNorm);
+                 T, Period,
+                 (ProblemType == MSCTSP ? -1 : 1) *
+                 (double) BestW / Precision,
+                 BestNorm);
         for (P = 1; T && P <= Period && Norm != 0; P++) {
             /* Adjust the Pi-values */
             t = FirstNode;
@@ -145,8 +148,9 @@ GainType Ascent()
                     printff
                         ("* T = %d, Period = %d, P = %d, "
                          "BestW = %0.1f, BestNorm = %d\n",
-                         T, Period, P, (double) BestW / Precision,
-                         BestNorm);
+                         T, Period, P, 
+                         (ProblemType == MSCTSP ? -1 : 1) *
+                         (double) BestW / Precision, BestNorm);
                 /* If in the initial phase, the step size is doubled */
                 if (InitialPhase && T * sqrt((double) Norm) > 0)
                     T *= 2;
@@ -159,8 +163,11 @@ GainType Ascent()
             } else {
                 if (TraceLevel >= 3)
                     printff
-                        ("  T = %d, Period = %d, P = %d, W = %0.1f, Norm = %d\n",
-                         T, Period, P, (double) W / Precision, Norm);
+                        ("  T = %d, Period = %d, P = %d, W = %0.1f, \
+                         Norm = %d\n",
+                         T, Period, P, 
+                         (ProblemType == MSCTSP ? -1 : 1) *
+                         (double) W / Precision, Norm);
                 if (InitialPhase && P > Period / 2) {
                     /* Conclude the initial phase */
                     InitialPhase = 0;
@@ -197,6 +204,7 @@ GainType Ascent()
     }
     if (TraceLevel >= 2)
         printff("Ascent: BestW = %0.1f, Norm = %d\n",
+                (ProblemType == MSCTSP ? -1 : 1) *
                 (double) BestW / Precision, Norm);
     return W;
 }

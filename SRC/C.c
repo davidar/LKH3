@@ -1,5 +1,3 @@
-
-
 #include "LKH.h"
 
 /* 
@@ -23,10 +21,14 @@ int C_EXPLICIT(Node * Na, Node * Nb)
  *  (1) If (Na,Nb) is an edge on the current tour, then its distance 
  *      is available in either the field PredCost or SucCost.
  *	   
- *  (2) A hash table (CacheVal) is consulted to see if the distance has
+ *  (2) If the edge (Na,Nb) is a candidate edge incident to Na, then
+ *      its distance is available in the field Cost of the corresponding
+ *      Candidate structure.
+ *
+ *  (3) A hash table (CacheVal) is consulted to see if the distance has
  *      been stored. 
  *	    
- *  (3) Otherwise the distance function is called and the distance computed
+ *  (4) Otherwise the distance function is called and the distance computed
  *      is stored in the hash table.	    	      
  */
 
@@ -48,7 +50,6 @@ int C_FUNCTION(Node * Na, Node * Nb)
         for (; (Nc = Cand->To); Cand++)
             if (Nc == Nb)
                 return Cand->Cost;
-    
     if ((Cand = Nb->CandidateSet))
         for (; (Nc = Cand->To); Cand++)
             if (Nc == Na)
@@ -56,6 +57,10 @@ int C_FUNCTION(Node * Na, Node * Nb)
     if ((Cand = Na->BackboneCandidateSet))
         for (; (Nc = Cand->To); Cand++)
             if (Nc == Nb)
+                return Cand->Cost;
+    if ((Cand = Nb->BackboneCandidateSet))
+        for (; (Nc = Cand->To); Cand++)
+            if (Nc == Na)
                 return Cand->Cost;
     if (CacheSig == 0)
         return D(Na, Nb);
@@ -175,8 +180,8 @@ int c_GEO(Node * Na, Node * Nb)
     int da = (int) Na->X, db = (int) Nb->X;
     double ma = Na->X - da, mb = Nb->X - db;
     int dx =
-        (int) (RRR * PI / 180.0 * fabs(da - db + 5.0 * (ma - mb) / 3.0) +
-               1.0);
+        (int) Scale * (RRR * PI / 180.0 * fabs(da - db + 5.0 *
+                       (ma - mb) / 3.0) + 1.0);
     return dx * Precision + Na->Pi + Nb->Pi;
 }
 
@@ -188,7 +193,7 @@ int c_GEOM(Node * Na, Node * Nb)
 {
     if (Fixed(Na, Nb))
         return Na->Pi + Nb->Pi;
-    int dx = (int) (M_RRR * M_PI / 180.0 * fabs(Na->X - Nb->X) + 1.0);
+    int dx = (int) Scale * (M_RRR * M_PI / 180.0 * fabs(Na->X - Nb->X) + 1.0);
     return dx * Precision + Na->Pi + Nb->Pi;
 }
 
@@ -200,9 +205,8 @@ int c_GEO_MEEUS(Node * Na, Node * Nb)
         return Na->Pi + Nb->Pi;
     int da = (int) Na->X, db = (int) Nb->X;
     double ma = Na->X - da, mb = Nb->X - db;
-    int dx =
-        (int) (RRR * M_PI / 180.0 * fabs(da - db + 5.0 * (ma - mb) / 3.0) *
-               f + 0.5);
+    int dx = (int) (Scale * RRR * M_PI / 180.0 * fabs(da - db + 5.0 *
+                    (ma - mb) / 3.0) * f + 0.5);
     return dx * Precision + Na->Pi + Nb->Pi;
 }
 
@@ -210,6 +214,7 @@ int c_GEOM_MEEUS(Node * Na, Node * Nb)
 {
     if (Fixed(Na, Nb))
         return Na->Pi + Nb->Pi;
-    int dx = (int) (M_RRR * M_PI / 180.0 * fabs(Na->X - Nb->X) * f + 0.5);
+    int dx = (int) (Scale * M_RRR * M_PI / 180.0 * fabs(Na->X - Nb->X) *
+                    f + 0.5);
     return dx * Precision + Na->Pi + Nb->Pi;
 }

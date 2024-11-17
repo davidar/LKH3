@@ -14,8 +14,8 @@
  * tour. 
  *
  * If THREE_LEVEL_TREE is defined the three-level tree representation is used
- * for a tour.  If TWO_LEVEL_TREE is defined the three-level tree 
- * representation is used.  Otherwise the linked list representation is used. 
+ * for a tour. If TWO_LEVEL_TREE is defined the three-level tree 
+ * representation is used. Otherwise the linked list representation is used. 
  *
  * All representations support the following primitive operations:
  *

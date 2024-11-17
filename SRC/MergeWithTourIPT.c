@@ -255,9 +255,12 @@ GainType MergeWithTourIPT()
     if (TraceLevel >= 2) {
         printff("IPT: ");
         if (Penalty)
-            printff(GainFormat "_", CurrentPenalty);
-         printff(GainFormat "\n",
-                 (Cost1 <= Cost2 ? Cost1 : Cost2) / Precision);
+            printff(GainFormat "_", 
+                    (ProblemType == MSCTSP ? -1 : 1) *
+                    CurrentPenalty);
+        printff(GainFormat "\n",
+                (ProblemType == MSCTSP ? -1 : 1) *
+                (Cost1 <= Cost2 ? Cost1 : Cost2) / Precision);
     }
     return (Cost1 <= Cost2 ? Cost1 : Cost2) / Precision;
 }

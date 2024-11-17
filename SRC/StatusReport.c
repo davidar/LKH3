@@ -5,24 +5,24 @@ void StatusReport(GainType Cost, double EntryTime, char *Suffix)
     if (Penalty) {
         printff("Cost = " GainFormat "_" GainFormat, CurrentPenalty, Cost);
         if (Optimum != MINUS_INFINITY && Optimum != 0) {
-            if (ProblemType != CCVRP && ProblemType != TRP &&
-                ProblemType != MLP &&
-                MTSPObjective != MINMAX && MTSPObjective != MINMAX_SIZE)
+            if (OptimizePenalty)
                 printff(", Gap = %0.4f%%",
-                        100.0 * (Cost - Optimum) / Optimum);
+                        (ProblemType == MSCTSP ? -1 : 1) *
+                        100.0 * (CurrentPenalty - Optimum) / Optimum);
             else
                 printff(", Gap = %0.4f%%",
-                        100.0 * (CurrentPenalty - Optimum) / Optimum);
+                        100.0 * (Cost - Optimum) / Optimum);
         }
         printff(", Time = %0.2f sec. %s",
                 fabs(GetTime() - EntryTime), Suffix);
     } else {
         printff("Cost = " GainFormat, Cost);
         if (Optimum != MINUS_INFINITY && Optimum != 0)
-            printff(", Gap = %0.4f%%", 100.0 * (Cost - Optimum) / Optimum);
-        printff(", Time = %0.2f sec. %s%s",
+            printff(", Gap = %0.4f%%",
+                    100.0 * (Cost - Optimum) / Optimum);
+        printff(", Time = %0.2f sec.%s%s",
                 fabs(GetTime() - EntryTime), Suffix,
-                Cost < Optimum ? "<" : Cost == Optimum ? "=" : "");
+                Cost < Optimum ? "<" : Cost == Optimum ? " =" : "");
     }
     printff("\n");
 }

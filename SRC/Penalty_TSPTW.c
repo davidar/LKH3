@@ -3,7 +3,7 @@
 
 GainType Penalty_TSPTW()
 {
-    Node *N = Depot, *NextN;
+    Node *N = Depot, *NextN = 0;
     GainType Sum = 0, P = 0;
     int Forward = SUCC(N)->Id != N->Id + DimensionSaved;
 

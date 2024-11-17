@@ -7,6 +7,8 @@
 
 #define d(a, b) (((a) == (b) ? 0 : D(a, b)\
                  - (a)->Pi - (b)->Pi) / Precision)
+#define less(a, b, dmin) (!c || (c(a, b)\
+                          - (a)->Pi - (b)->Pi) / Precision < dmin)
 
 static void build_path(int n, int *path, int nb_clust);
 static void fast_POPMUSIC(int n, int *path, int R);
@@ -44,7 +46,7 @@ static void optimize_path(int n, int *path);
 
 void Create_POPMUSIC_CandidateSet(int K)
 {
-    int n, i, no_res, setInitialSuc, deleted = 0, d;
+    int n, i, no_res, setInitialSuc, d, deleted;
     int *solution;
     GainType cost, costSum = 0;
     GainType costMin = PLUS_INFINITY, costMax = MINUS_INFINITY;
@@ -69,6 +71,7 @@ void Create_POPMUSIC_CandidateSet(int K)
 
     /* Create a tour containing all fixed or common edges */
     InitialTourAlgorithm = WALK;
+    Trial = 1;
     ChooseInitialTour();
     InitialTourAlgorithm = InitialTourAlgorithmSaved;
     /* N->V == 1 iff N is going to be deleted */
@@ -84,7 +87,7 @@ void Create_POPMUSIC_CandidateSet(int K)
 
     for (no_res = 1; no_res <= NB_RES; no_res++) {
         /* Create set of non-deleted nodes */
-        n = 0;
+        n = deleted = 0;
         N = FirstNode;
         do {
             if (!N->V) {
@@ -125,7 +128,7 @@ void Create_POPMUSIC_CandidateSet(int K)
         node[n] = node[solution[0]];
         cost = length_path(n, solution);
         if (TraceLevel >= 2) {
-            printff("%d: Initial cost:  %lld, ", no_res, cost);
+            printff("%d: Initial cost:  " GainFormat ", ", no_res, cost);
             if (Optimum != MINUS_INFINITY && Optimum != 0)
                 printff("Gap = %0.2f%%, ",
                         100.0 * (cost - Optimum) / Optimum);
@@ -137,7 +140,7 @@ void Create_POPMUSIC_CandidateSet(int K)
         node[n] = node[solution[0]];
         cost = length_path(n, solution);
         if (TraceLevel >= 2) {
-            printff("%d: Improved cost: %lld, ", no_res, cost);
+            printff("%d: Improved cost: " GainFormat ", ", no_res, cost);
             if (Optimum != MINUS_INFINITY && Optimum != 0)
                 printff("Gap = %0.2f%%, ",
                         100.0 * (cost - Optimum) / Optimum);
@@ -149,7 +152,7 @@ void Create_POPMUSIC_CandidateSet(int K)
         setInitialSuc = 0;
         if (cost < costMin) {
             costMin = cost;
-            setInitialSuc = POPMUSIC_InitialTour && !FirstNode->InitialSuc;
+            setInitialSuc = POPMUSIC_InitialTour && !InitialTourFileName;
         }
         for (i = 0; i < n; i++) {
             Node *a = node[solution[i]];
@@ -215,20 +218,20 @@ static void optimize_path(int n, int *path)
     for (i = 0; i <= n; i++) {
         order[i] = i;
         d[i] = (int *) malloc((n + 1) * sizeof(int));
+        node_path[i] = node[path[i]];
     }
     for (i = 0; i < n; i++) {
-        a = node[path[i]];
+        a = node_path[i];
         for (j = i + 1; j <= n; j++) {
-            b = node[path[j]];
-            d[i][j] = d[j][i] = d(a, b);
+            b = node_path[j];
+            d[i][j] = d[j][i] = 
+                IsPossibleCandidate(a, b) ? d(a, b) : INT_MAX;
         }
     }
     d[0][n] = d[n][0] = 0;
     length = 0;
     for (i = 0; i < n; i++)
         length += d[i][i + 1];
-    for (i = 0; i <= n; i++)
-        node_path[i] = node[path[i]];
     path_threeOpt(n, d, order, &length);
     for (i = 0; i <= n; i++)
         free(d[i]);
@@ -258,24 +261,24 @@ static void build_path(int n, int *path, int nb_clust)
     for (i = 0; i <= n; i++)
         tmp_path[i] = path[i];
 
-    /* Set tmp_path[1] be the closest city to path[0] */
+    /* Let tmp_path[1] be the closest city to path[0] */
     dmin = d(node[tmp_path[1]], node[path[0]]);
     closest = 1;
     for (i = 2; i < n; i++) {
-        d = d(node[tmp_path[i]], node[path[0]]);
-        if (d < dmin) {
+        if (less(node[tmp_path[i]], node[path[0]], dmin) &&
+            (d = d(node[tmp_path[i]], node[path[0]])) < dmin) {
             dmin = d;
             closest = i;
         }
     }
     swap(tmp_path + 1, tmp_path + closest);
 
-    /* Set tmp_path[2] be the closest city to path[n] */
+    /* Let tmp_path[2] be the closest city to path[n] */
     dmin = d(node[tmp_path[2]], node[path[n]]);
     closest = 2;
     for (i = 3; i < n; i++) {
-        d = d(node[tmp_path[i]], node[path[n]]);
-        if (d < dmin) {
+        if (less(node[tmp_path[i]], node[path[n]], dmin) &&
+            (d = d(node[tmp_path[i]], node[path[n]])) < dmin) {
             dmin = d;
             closest = i;
         }
@@ -289,7 +292,7 @@ static void build_path(int n, int *path, int nb_clust)
     sample = (int *) malloc((nb_clust + 2) * sizeof(int));
     for (i = 0; i <= nb_clust; i++)
         sample[i] = tmp_path[i];
-    sample[nb_clust + 1] = sample[0];
+    sample[nb_clust + 1] = path[n];
     optimize_path(nb_clust + 1, sample);
 
     /* Assign each city of path to the closest of the sample */
@@ -301,8 +304,8 @@ static void build_path(int n, int *path, int nb_clust)
                 closest = j;
                 break;
             }
-            d = d(node[path[i]], node[sample[j]]);
-            if (d < dmin) {
+            if (less(node[path[i]], node[sample[j]], dmin) &&
+                (d = d(node[path[i]], node[sample[j]])) < dmin) {
                 dmin = d;
                 closest = j;
             }
@@ -332,15 +335,10 @@ static void build_path(int n, int *path, int nb_clust)
     free(assigned);
     free(assignment);
     for (i = 0; i < nb_clust; i++) {
-        start = start_clust[i] - 1;
-        if (start < 0)
-            start = 0;
+        start = start_clust[i];
         end = start_clust[i + 1] + 1;
-        if (end > n)
-            end = n;
         /* Recursively optimize sub-path corresponding to each cluster */
-        if (end - start < n)
-            build_path(end - start, path + start, nb_clust);
+        build_path(end - start, path + start, nb_clust);
     }
     free(start_clust);
 }
@@ -379,7 +377,7 @@ static void fast_POPMUSIC(int n, int *path, int R)
     }
 }
 
-/* Iterated 3-opt code  */
+/* Iterated 3-opt code */
 
 static int n;
 static int **dist;
@@ -541,7 +539,6 @@ static void threeOpt()
     int improved = 1, a, b, c, d, e, f, xa, xc, xe, i, j;
     GainType g0, g1, g2, g3, gain;
 
-
     while (improved) {
         improved = 0;
         for (b = 0; b < n; b++) {
@@ -659,27 +656,37 @@ static void createNeighbors()
     }
 }
 
+static int legal(int r, int i, int t[4])
+{
+    while (--i >= 0)
+        if (r == t[i])
+            return 0;
+    return !fixed(r, next(r));
+}
+
+static int select_t(int i, int t[4])
+{
+    int r, r0;
+    r = r0 = unif(0, n - 1);
+    while (!legal(r, i, t)) {
+        if (++r == n)
+            r = 0;
+        if (r == r0)
+            return -1;
+    }
+    return r;
+}
+
 static void doubleBridgeKick()
 {
-    int t[4], r[4], a, b, c, d, e, f, g, h, i, j;
+    int t[4], a, b, c, d, e, f, g, h, i;
 
     reversed = 0;
     for (i = 0; i <= 3; i++) {
-        r[i] = unif(0, n - i - 1);
-        for (j = 0; j < n - i; j++) {
-            t[i] = tour[r[i]];
-            if (!fixed(t[i], next(t[i]))) {
-                swap(tour + r[i], tour + n - 1 - i);
-                break;
-            }
-            if (++r[i] == n - i)
-                r[i] = 0;
-        }
-        if (j == n - i)
+        t[i] = select_t(i, t);
+        if (t[i] < 0)
             return;
     }
-    for (i = 3; i >= 0; i--)
-        swap(tour + r[i], tour + n - 1 - i);
     if (pos[t[0]] > pos[t[1]])
         swap(t, t + 1);
     if (pos[t[2]] > pos[t[3]])

@@ -61,7 +61,7 @@ GainType SFCTour(int CurveType)
     if (YMax == YMin)
         YMax = YMin + 1;
 
-    assert(Perm = (Node **) malloc(Dimension * sizeof(Node *)));
+    Perm = (Node **) malloc(Dimension * sizeof(Node *));
     for (i = 0, N = FirstNode; i < Dimension; i++, N = N->Suc)
         (Perm[i] = N)->V =
             Index((N->X - XMin) / (XMax - XMin),

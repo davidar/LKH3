@@ -57,7 +57,7 @@
  * CANDIDATE_SET_TYPE = { ALPHA | DELAUNAY [ PURE ] | NEAREST-NEIGHBOR |
  *                        POPMUSIC | QUADRANT }
  * Specifies the candidate set type.
- * ALPHA is LKH's default type. It is applicable in general.
+ * ALPHA is LKH's default type. ALPHA and POPMUSIC are applicable in general.
  * The other types can only be used for instances given by coordinates.
  * The optional suffix PURE for the DELAUNAY type specifies that only
  * edges of the Delaunay graph are used as candidates.
@@ -72,6 +72,10 @@
  * DEPOT = <integer>
  * Specifies the depot node.
  * Default: 1
+ *
+ * DISTANCE : <real>
+ * The maximum length allowed for each route in a CVRP.
+ * Default: DBL_MAX
  *
  * EDGE_FILE = <string>
  * Specifies the name of a file of candidate edges in Concorde format.
@@ -93,6 +97,10 @@
  * tour (determined by the ascent).
  * Default: 1.0/DIMENSION
  *
+ * EXTERNAL_SALESMEN = <integer>
+ * Specifies the number of external salesmen for an OCMTSP problem.
+ * Default: 0
+ *
  * EXTRA_CANDIDATES = <integer> [ SYMMETRIC ]
  * Number of extra candidate edges to be added to the candidate set
  * of each node. Their candidate set type may be specified after the
@@ -102,7 +110,7 @@
  * that each of them is associated with both its two end nodes.
  * Default: 0
  *
- * EXTRA_CANDIDATE_SET_TYPE = { NEAREST-NEIGHBOR | QUADRANT }
+ * EXTRA_CANDIDATE_SET_TYPE = { NEAREST-NEIGHBOR | POPMISIC | QUADRANT }
  * The candidate set type of extra candidate edges.
  * Default: QUADRANT
  *
@@ -123,7 +131,8 @@
  * Default: 1
  *
  * INITIAL_TOUR_ALGORITHM = { BORUVKA | CVRP | GREEDY | MOORE | MTSP |
- *       NEAREST-NEIGHBOR | QUICK-BORUVKA | SIERPINSKI | SOP | TSPDL | WALK }
+ *       NEAREST-NEIGHBOR | PCTSP | QUICK-BORUVKA | SIERPINSKI | SOP | 
+ *       TSPDL | WALK }
  * Specifies the algorithm for obtaining an initial tour.
  * Default: WALK
  *
@@ -146,6 +155,9 @@
  * edges is set to zero. The tour is given by a list of integers giving
  * the sequence in which the nodes are visited in the tour. The tour is
  * terminated by a -1.
+ *
+ * K = <integer>
+ * The k-value used for solving a k-TSP instance.
  *
  * KICK_TYPE = <integer>
  * Specifies the value of k for a random k-swap kick (an extension of the
@@ -311,7 +323,11 @@
  * where d[i][j], c[i][j], pi[i] and pi[j] are all integral.
  * Default: 100 (which corresponds to 2 decimal places)
  *
- * RECOMBINATION = { IPT | GPX2 }
+ * PROBABILITY = <integer>
+ * The probalilty for PTSP (in percent).
+ * Default: 100.
+ *
+ * RECOMBINATION = { IPT | GPX2 | CLARIST }
  * Default: IPT
  *
  * RESTRICTED_SEARCH = { YES | NO }
@@ -330,7 +346,7 @@
  * Default: 1
  *
  * SCALE = <integer>
- * Scale factor. Disatnces are multiplied by this factor.
+ * Scale factor. Distances are multiplied by this factor.
  * Default: 1
  *
  * SEED = <integer>
@@ -349,7 +365,7 @@
  *
  *    GAIN23 = NO
  *    KICKS = 1
- *    KICKTYPE = 4
+ *    KICK_TYPE = 4
  *    MAX_SWAPS = 0
  *    MOVE_TYPE = 5 SPECIAL
  *    POPULATION_SIZE = 10
@@ -411,6 +427,10 @@
  * Specifies a time limit in seconds for each run.
  * Default: DBL_MAX
  *
+ * TOTAL_TIME_LIMIT = <real>
+ * Specifies a total time limit in seconds.
+ * Default: DBL_MAX
+ *
  * TOUR_FILE = <string>
  * Specifies the name of a file where the best tour is to be written.
  * When a run has produced a new best tour, the tour is written to this file.
@@ -426,7 +446,7 @@
  * VEHICLES = <integer>
  * Specifies the number of vehicles/salesmen.
  * Default: 1
- 
+ * 
  * List of abbreviations
  * ---------------------
  *
@@ -437,11 +457,14 @@
  *     ALPHA             A
  *     BORDERS           B
  *     BORUVKA           B
+ *     CLARIST           C
  *     COMPRESSED        C
  *     CVRP              C
  *     DELAUNAY          D
  *     EXTENDED          E
+ *     GPX2              G
  *     GREEDY            G
+ *     IPT               I
  *     KARP              KA
  *     K-CENTER          K-C
  *     K-MEANS           K-M
@@ -449,6 +472,7 @@
  *     MTSP              MT
  *     NEAREST-NEIGHBOR  N
  *     NO                N
+ *     PCTSP             P
  *     POPMUSIC          P
  *     PURE              P
  *     QUADRANT          Q
@@ -490,7 +514,9 @@ void ReadParameters()
     DelaunayPartitioning = 0;
     DelaunayPure = 0;
     DemandDimension = 1;
+    DistanceLimit = DBL_MAX;
     Excess = -1;
+    ExternalSalesmen = 0;
     ExtraCandidates = 0;
     ExtraCandidateSetSymmetric = 0;
     ExtraCandidateSetType = QUADRANT;
@@ -527,6 +553,7 @@ void ReadParameters()
     PatchingCExtended = 0;
     PatchingCRestricted = 0;
     Precision = 100;
+    Probability = 100;
     POPMUSIC_InitialTour = 0;
     POPMUSIC_MaxNeighbors = 5;
     POPMUSIC_SampleSize = 10;
@@ -549,6 +576,7 @@ void ReadParameters()
     SubsequentMoveTypeSpecial = 0;
     SubsequentPatching = 1;
     TimeLimit = DBL_MAX;
+    TotalTimeLimit = DBL_MAX;
     TraceLevel = 1;
     TSPTW_Makespan = 0;
 
@@ -613,8 +641,7 @@ void ReadParameters()
             if (!(Name = GetFileName(0)))
                 eprintf("CANDIDATE_FILE: string expected");
             if (CandidateFiles == 0) {
-                assert(CandidateFileName =
-                       (char **) malloc(sizeof(char *)));
+                CandidateFileName = (char **) malloc(sizeof(char *));
                 CandidateFileName[CandidateFiles++] = Name;
             } else {
                 int i;
@@ -622,10 +649,9 @@ void ReadParameters()
                     if (!strcmp(Name, CandidateFileName[i]))
                         break;
                 if (i == CandidateFiles) {
-                    assert(CandidateFileName =
-                           (char **) realloc(CandidateFileName,
-                                             (CandidateFiles +
-                                              1) * sizeof(char *)));
+                    CandidateFileName =
+                       (char **) realloc(CandidateFileName,
+                                         (CandidateFiles + 1) * sizeof(char *));
                     CandidateFileName[CandidateFiles++] = Name;
                 }
             }
@@ -668,13 +694,17 @@ void ReadParameters()
                 eprintf("DEPOT: integer expected");
             if (MTSPDepot <= 0)
                 eprintf("DEPOT: positive integer expected");
-        } else if (!strcmp(Keyword, "EOF")) {
-            break;
+        } else if (!strcmp(Keyword, "DISTANCE")) {
+            if (!(Token = strtok(0, Delimiters)) ||
+                !sscanf(Token, "%lf", &DistanceLimit))
+                eprintf("DISTANCE: real expected");
+            if (DistanceLimit < 0)
+                eprintf("DISTANCE: >= 0 expected");
         } else if (!strcmp(Keyword, "EDGE_FILE")) {
             if (!(Name = GetFileName(0)))
                 eprintf("EDGE_FILE: string expected");
             if (EdgeFiles == 0) {
-                assert(EdgeFileName = (char **) malloc(sizeof(char *)));
+                EdgeFileName = (char **) malloc(sizeof(char *));
                 EdgeFileName[EdgeFiles++] = Name;
             } else {
                 int i;
@@ -682,19 +712,26 @@ void ReadParameters()
                     if (!strcmp(Name, EdgeFileName[i]))
                         break;
                 if (i == EdgeFiles) {
-                    assert(EdgeFileName =
-                           (char **) realloc(EdgeFileName,
-                                             (EdgeFiles +
-                                              1) * sizeof(char *)));
+                    EdgeFileName =
+                       (char **) realloc(EdgeFileName,
+                                         (EdgeFiles + 1) * sizeof(char *));
                     EdgeFileName[EdgeFiles++] = Name;
                 }
             }
+        } else if (!strcmp(Keyword, "EOF")) {
+            break;
         } else if (!strcmp(Keyword, "EXCESS")) {
             if (!(Token = strtok(0, Delimiters)) ||
                 !sscanf(Token, "%lf", &Excess))
                 eprintf("EXCESS: real expected");
             if (Excess < 0)
                 eprintf("EXCESS: non-negeative real expected");
+        } else if (!strcmp(Keyword, "EXTERNAL_SALESMEN")) {
+            if (!(Token = strtok(0, Delimiters)) ||
+                !sscanf(Token, "%d", &ExternalSalesmen))
+                eprintf("%s: integer expected", Keyword);
+            if (ExternalSalesmen < 0)
+                eprintf("%s: non-negative integer expected", Keyword);
         } else if (!strcmp(Keyword, "EXTRA_CANDIDATES")) {
             if (!(Token = strtok(0, Delimiters)) ||
                 !sscanf(Token, "%d", &ExtraCandidates))
@@ -712,16 +749,18 @@ void ReadParameters()
         } else if (!strcmp(Keyword, "EXTRA_CANDIDATE_SET_TYPE")) {
             if (!(Token = strtok(0, Delimiters)))
                 eprintf("%s", "EXTRA_CANDIDATE_SET_TYPE: "
-                        "NEAREST-NEIGHBOR, or QUADRANT expected");
+                        "NEAREST-NEIGHBOR, POPMUSIC or QUADRANT expected");
             for (i = 0; i < strlen(Token); i++)
                 Token[i] = (char) toupper(Token[i]);
             if (!strncmp(Token, "NEAREST-NEIGHBOR", strlen(Token)))
                 ExtraCandidateSetType = NN;
+            else if (!strncmp(Token, "POPMUSIC", strlen(Token)))
+                ExtraCandidateSetType = POPMUSIC;
             else if (!strncmp(Token, "QUADRANT", strlen(Token)))
                 ExtraCandidateSetType = QUADRANT;
             else
                 eprintf("%s", "EXTRA_CANDIDATE_SET_TYPE: "
-                        "NEAREST-NEIGHBOR or QUADRANT expected");
+                        "NEAREST-NEIGHBOR, POPMUSIC or QUADRANT expected");
         } else if (!strcmp(Keyword, "GAIN23")) {
             if (!ReadYesOrNo(&Gain23Used))
                 eprintf("GAIN23: YES or NO expected");
@@ -744,7 +783,7 @@ void ReadParameters()
             if (!(Token = strtok(0, Delimiters)))
                 eprintf("INITIAL_TOUR_ALGORITHM: "
                         "BORUVKA, CTSP, CVRP, GREEDY, MOORE, MTSP,\n"
-                        "NEAREST-NEIGHBOR, QUICK-BORUVKA, SIERPINSKI, "
+                        "NEAREST-NEIGHBOR, PCTSP, QUICK-BORUVKA, SIERPINSKI, "
                         "SOP, TSPDL, or WALK expected");
             for (i = 0; i < strlen(Token); i++)
                 Token[i] = (char) toupper(Token[i]);
@@ -752,6 +791,8 @@ void ReadParameters()
                 InitialTourAlgorithm = BORUVKA;
             else if (!strncmp(Token, "CTSP", strlen(Token)))
                 InitialTourAlgorithm = CTSP_ALG;
+            else if (!strncmp(Token, "GCTSP", strlen(Token)))
+                InitialTourAlgorithm = GCTSP_ALG;
             else if (!strncmp(Token, "CVRP", strlen(Token)))
                 InitialTourAlgorithm = CVRP_ALG;
             else if (!strncmp(Token, "GREEDY", strlen(Token)))
@@ -762,6 +803,8 @@ void ReadParameters()
                 InitialTourAlgorithm = MTSP_ALG;
             else if (!strncmp(Token, "NEAREST-NEIGHBOR", strlen(Token)))
                 InitialTourAlgorithm = NEAREST_NEIGHBOR;
+            else if (!strncmp(Token, "PCTSP", max(strlen(Token), 2)))
+                InitialTourAlgorithm = PCTSP_ALG;
             else if (!strncmp(Token, "QUICK-BORUVKA", strlen(Token)))
                 InitialTourAlgorithm = QUICK_BORUVKA;
             else if (!strncmp(Token, "SIERPINSKI", max(strlen(Token), 2)))
@@ -795,6 +838,12 @@ void ReadParameters()
                 eprintf("KICK_TYPE: integer expected");
             if (KickType != 0 && KickType < 4)
                 eprintf("KICK_TYPE: integer >= 4 expected");
+        } else if (!strcmp(Keyword, "K")) {
+            if (!(Token = strtok(0, Delimiters)) ||
+                !sscanf(Token, "%d", &k))
+                eprintf("k: integer expected");
+            if (k <= 0)
+                eprintf("K: positive integer expected");
         } else if (!strcmp(Keyword, "KICKS")) {
             if (!(Token = strtok(0, Delimiters)) ||
                 !sscanf(Token, "%d", &Kicks))
@@ -841,8 +890,7 @@ void ReadParameters()
             if (!(Name = GetFileName(0)))
                 eprintf("MERGE_TOUR_FILE: string expected");
             if (MergeTourFiles == 0) {
-                assert(MergeTourFileName =
-                       (char **) malloc(sizeof(char *)));
+                MergeTourFileName = (char **) malloc(sizeof(char *));
                 MergeTourFileName[MergeTourFiles++] = Name;
             } else {
                 int i;
@@ -850,10 +898,9 @@ void ReadParameters()
                     if (!strcmp(Name, MergeTourFileName[i]))
                         break;
                 if (i == MergeTourFiles) {
-                    assert(MergeTourFileName =
-                           (char **) realloc(MergeTourFileName,
-                                             (MergeTourFiles +
-                                              1) * sizeof(char *)));
+                    MergeTourFileName =
+                       (char **) realloc(MergeTourFileName,
+                                         (MergeTourFiles + 1) * sizeof(char *));
                     MergeTourFileName[MergeTourFiles++] = Name;
                 }
             }
@@ -991,18 +1038,28 @@ void ReadParameters()
             if (!(Token = strtok(0, Delimiters)) ||
                 !sscanf(Token, "%d", &Precision))
                 eprintf("PRECISION: integer expected");
+        } else if (!strcmp(Keyword, "PROBABILITY")) {
+            if (!(Token = strtok(0, Delimiters)) ||
+                !sscanf(Token, "%d", &Probability))
+                eprintf("PROBABILITY: integer expected");
+            if (Probability < 0)       
+                eprintf("PROBABILITY: >= 0 expected");
+            if (Probability > 100)       
+                eprintf("PROBABILITY: <= 100 expected");
         } else if (!strcmp(Keyword, "PROBLEM_FILE")) {
             if (!(ProblemFileName = GetFileName(0)))
                 eprintf("PROBLEM_FILE: string expected");
         } else if (!strcmp(Keyword, "RECOMBINATION")) {
-            if (!(Token = strtok(0, Delimiters)))
+             if (!(Token = strtok(0, Delimiters)))
                 eprintf("RECOMBINATION: string expected");
-            if (!strcmp(Token, "IPT"))
+            if (!strncmp(Token, "IPT", strlen(Token)))
                 Recombination = IPT;
-            else if (!strcmp(Token, "GPX2"))
+            else if (!strncmp(Token, "GPX2", strlen(Token)))
                 Recombination = GPX2;
+            else if (!strncmp(Token, "CLARIST", strlen(Token)))
+                Recombination = CLARIST;
             else
-                eprintf("RECOMBINATION: IPT or GPX2 expected");
+                eprintf("RECOMBINATION: IPT, GPX2 or CLARIST expected");
         } else if (!strcmp(Keyword, "RESTRICTED_SEARCH")) {
             if (!ReadYesOrNo(&RestrictedSearch))
                 eprintf("RESTRICTED_SEARCH: YES or NO expected");
@@ -1120,6 +1177,12 @@ void ReadParameters()
                 eprintf("TIME_LIMIT: real expected");
             if (TimeLimit < 0)
                 eprintf("TIME_LIMIT: >= 0 expected");
+        } else if (!strcmp(Keyword, "TOTAL_TIME_LIMIT")) {
+            if (!(Token = strtok(0, Delimiters)) ||
+                !sscanf(Token, "%lf", &TotalTimeLimit))
+                eprintf("TOTAL_TIME_LIMIT: real expected");
+            if (TimeLimit < 0)
+                eprintf("TOTAL_TIME_LIMIT: >= 0 expected");
         } else if (!strcmp(Keyword, "TOUR_FILE")) {
             if (!(TourFileName = GetFileName(0)))
                 eprintf("TOUR_FILE: string expected");
@@ -1138,6 +1201,10 @@ void ReadParameters()
         eprintf("SUBPROBLEM_SIZE specification is missing");
     if (SubproblemSize > 0 && SubproblemTourFileName == 0)
         eprintf("SUBPROBLEM_TOUR_FILE specification is missing");
+    if (SubproblemSize > 0 && Salesmen > 1)
+        eprintf("SUBPROBLEM specification not possible for SALESMEN > 1");
+    if (CandidateSetType != DELAUNAY)
+        DelaunayPure = 0;
     fclose(ParameterFile);
     free(LastLine);
     LastLine = 0;
@@ -1161,7 +1228,7 @@ static char *GetFileName(char *Line)
         *t = '\0';
     if (!strlen(Rest))
         return 0;
-    assert(t = (char *) malloc(strlen(Rest) + 1));
+    t = (char *) malloc(strlen(Rest) + 1);
     strcpy(t, Rest);
     return t;
 }

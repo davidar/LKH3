@@ -20,9 +20,9 @@ void CreateNNCandidateSet(int K)
 
     if (TraceLevel >= 2)
         printff("Creating NN candidate set ... \n");
-    assert(XNearList = (Node **) malloc(Dimension * sizeof(Node *)));
-    assert(To = (Node **) malloc((K + 1) * sizeof(Node *)));
-    assert(Cost = (int *) malloc((K + 1) * sizeof(int)));
+    XNearList = (Node **) malloc(Dimension * sizeof(Node *));
+    To = (Node **) malloc((K + 1) * sizeof(Node *));
+    Cost = (int *) malloc((K + 1) * sizeof(int));
     for (Na = FirstNode, k = 0; k < Dimension; Na = Na->Suc, k++)
         XNearList[k] = Na;
     qsort(XNearList, Dimension, sizeof(Node *), compareX);

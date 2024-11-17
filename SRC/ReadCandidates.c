@@ -53,8 +53,8 @@ int ReadCandidates(int MaxCandidates)
             fscanint(CandidateFile, &Count);
             assert(Count >= 0 && Count < Dimension);
             if (!From->CandidateSet)
-                assert(From->CandidateSet =
-                       (Candidate *) calloc(Count + 1, sizeof(Candidate)));
+                From->CandidateSet =
+                   (Candidate *) calloc(Count + 1, sizeof(Candidate));
             for (i = 0; i < Count; i++) {
                 fscanint(CandidateFile, &Id);
                 assert(Id >= 1 && Id <= Dimension);

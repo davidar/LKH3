@@ -5,10 +5,12 @@ TREE_TYPE = TWO_LEVEL_TREE
 # CC = gcc
 IDIR = INCLUDE
 ODIR = OBJ
-CFLAGS = -O3 -Wall -I$(IDIR) -D$(TREE_TYPE) -g -fcommon -static
+CFLAGS = -O3 -Wall -I$(IDIR) -D$(TREE_TYPE) -g -flto -fcommon
+# CFLAGS = -O3 -Wall -I$(IDIR) -D$(TREE_TYPE) -g -fcommon
+# CFLAGS = -O3 -Wall -I$(IDIR) -D$(TREE_TYPE) -g -flto -zmuldefs
 
 _DEPS = Delaunay.h GainType.h Genetic.h GeoConversion.h Hashing.h      \
-        Heap.h LKH.h Segment.h Sequence.h BIT.h gpx.h
+        Heap.h LKH.h Segment.h Sequence.h BIT.h gpx.h CLARIST.h
 
 DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
 
@@ -22,13 +24,14 @@ _OBJ = Activate.o AddCandidate.o AddExtraCandidates.o                  \
        ChooseInitialTour.o Connect.o CreateCandidateSet.o              \
        CreateDelaunayCandidateSet.o CreateNNCandidateSet.o             \
        Create_POPMUSIC_CandidateSet.o CreateQuadrantCandidateSet.o     \
-	   CTSP_InitialTour.o CVRP_InitialTour.o Delaunay.o                \
+       CTSP_InitialTour.o CVRP_InitialTour.o Delaunay.o                \
        Distance.o Distance_MTSP.o Distance_SOP.o Distance_SPECIAL.o    \
        eprintf.o ERXT.o Excludable.o Exclude.o FindTour.o              \
        FixedOrCommonCandidates.o Flip.o Flip_SL.o Flip_SSL.o           \
        Forbidden.o FreeStructures.o                                    \
        fscanint.o Gain23.o GenerateCandidates.o Genetic.o              \
        GeoConversion.o GetTime.o GreedyTour.o Hashing.o Heap.o         \
+       GCTSP_InitialTour.o                                             \
        Improvement.o IsBackboneCandidate.o IsCandidate.o               \
        IsCommonEdge.o IsPossibleCandidate.o KSwapKick.o LinKernighan.o \
        LKHmain.o                                                       \
@@ -41,12 +44,18 @@ _OBJ = Activate.o AddCandidate.o AddExtraCandidates.o                  \
        OrderCandidateSet.o PatchCycles.o                               \
        Penalty_ACVRP.o Penalty_BWTSP.o Penalty_CCVRP.o                 \
        Penalty_CVRP.o Penalty_CVRPTW.o Penalty_CTSP.o                  \
-	   Penalty_1_PDTSP.o Penalty_MLP.o Penalty_M_PDTSP.o               \
-	   Penalty_M1_PDTSP.o Penalty_MTSP.o Penalty_OVRP.o                \
-	   Penalty_PDPTW.o Penalty_PDTSP.o Penalty_PDTSPF.o                \
-	   Penalty_PDTSPL.o Penalty_RCTVRP.o                               \
-	   Penalty_SOP.o Penalty_TRP.o Penalty_TSPDL.o Penalty_TSPPD.o     \
-	   Penalty_TSPTW.o Penalty_VRPB.o Penalty_VRPBTW.o Penalty_VRPPD.o \
+       Penalty_CTSP_D.o Penalty_CluVRP.o                               \
+       Penalty_CBTSP.o Penalty_CBnTSP.o                                \
+       Penalty_GCTSP.o Penalty_CCCTSP.o                                \
+       Penalty_1_PDTSP.o Penalty_MLP.o Penalty_M_PDTSP.o               \
+       Penalty_KTSP.o Penalty_M1_PDTSP.o                               \
+       Penalty_MSCTSP.o Penalty_MTSP.o Penalty_OVRP.o                  \
+       Penalty_PDPTW.o Penalty_PDTSP.o Penalty_PDTSPF.o                \
+       Penalty_PCTSP.o                                                 \
+       Penalty_PDTSPL.o Penalty_PTSP.o Penalty_RCTVRP.o                \
+       Penalty_SOP.o Penalty_TRP.o Penalty_TSPDL.o Penalty_TSPPD.o     \
+       Penalty_TSPTW.o Penalty_VRPB.o Penalty_VRPBTW.o Penalty_VRPPD.o \
+	   PCTSP_InitialTour.o PCTSP_RepairTour.o                          \
        PDPTW_Reduce.o printff.o PrintParameters.o                      \
        Random.o ReadCandidates.o ReadEdges.o ReadLine.o                \
        ReadParameters.o ReadPenalties.o ReadProblem.o RecordBestTour.o \
@@ -61,9 +70,9 @@ _OBJ = Activate.o AddCandidate.o AddExtraCandidates.o                  \
        SOP_InitialTour.o SOP_Report.o StatusReport.o                   \
        Statistics.o StoreTour.o SymmetrizeCandidateSet.o               \
        TrimCandidateSet.o TSPDL_InitialTour.o TSPTW_MakespanCost.o     \
-	   TSPTW_Reduce.o VRPB_Reduce.o BIT.o                              \
+       TSPTW_Reduce.o VRPB_Reduce.o BIT.o                              \
        WriteCandidates.o WritePenalties.o WriteTour.o                  \
-       MergeWithTourGPX2.o gpx.o
+       MergeWithTourGPX2.o gpx.o MergeWithTourCLARIST.o LKH.o
 
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
@@ -81,3 +90,4 @@ LKH: $(OBJ) $(DEPS)
 
 clean:
 	/bin/rm -f $(ODIR)/*.o ../LKH *~ ._* $(IDIR)/*~ $(IDIR)/._* 
+

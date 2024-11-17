@@ -4,7 +4,7 @@
 
 /*
  * Given a tour and a partitioning of the problem into subproblems, the 
- * SolveSubproblemBorderProblems function attempt to improve the tour by 
+ * SolveSubproblemBorderProblems function attempts to improve the tour by 
  * means of a new partitioning given by the borders of these subproblems.
  *
  * For each of the original subproblems a new subproblem is defined by
@@ -34,8 +34,7 @@ void SolveSubproblemBorderProblems(int Subproblems,
     int *SubproblemSaved;
     double EntryTime = GetTime();
 
-    assert(SubproblemSaved =
-           (int *) malloc((DimensionSaved + 1) * sizeof(int)));
+    SubproblemSaved = (int *) malloc((DimensionSaved + 1) * sizeof(int));
     /* Compute upper bound for the original problem */
     N = FirstNode;
     do {
@@ -85,10 +84,10 @@ void SolveSubproblemBorderProblems(int Subproblems,
 static void MarkBorderPoints(int CurrentSubproblem)
 {
     double Min[3], Max[3];
-    int dMin, dMax, d, i, axis, ActualSubproblemSize = 0, Size = 0;
+    int dMin, dMax, dX, dY, dZ, d, i, ActualSubproblemSize = 0, Size = 0;
     Node **A, *N;
 
-    assert(A = (Node **) malloc(DimensionSaved * sizeof(Node *)));
+    A = (Node **) malloc(DimensionSaved * sizeof(Node *));
     Min[0] = Min[1] = Min[2] = DBL_MAX;
     Max[0] = Max[1] = Max[2] = -DBL_MAX;
     if (WeightType == GEO || WeightType == GEOM ||
@@ -132,33 +131,46 @@ static void MarkBorderPoints(int CurrentSubproblem)
                     N->Rank = d;
             }
         } else {
-            axis = -1;
+            dMin = (int) (fabs(Coord(N, 0) - Min[0]) + 0.5);
+            dMax = (int) (fabs(Coord(N, 0) - Max[0]) + 0.5);
+            dX = dMin < dMax ? dMin : dMax;
+            dMin = (int) (fabs(Coord(N, 1) - Min[1]) + 0.5);
+            dMax = (int) (fabs(Coord(N, 1) - Max[1]) + 0.5);
+            dY = dMin < dMax ? dMin : dMax;
             if (CoordType == TWOD_COORDS) {
-                if (N->X >= Min[0] && N->X <= Max[0])
-                    axis = 1;
-                else if (N->Y >= Min[1] && N->Y <= Max[1])
-                    axis = 0;
-            } else if (N->X >= Min[0] && N->X <= Max[0]) {
-                if (N->Y >= Min[1] && N->Y <= Max[1])
-                    axis = 2;
-                else if (N->Z >= Min[2] && N->Z <= Max[2])
-                    axis = 1;
-            } else if (N->Y >= Min[1] && N->Y <= Max[1] &&
-                       N->Z >= Min[2] && N->Z <= Max[2])
-                axis = 0;
-            if (axis != -1) {
-                dMin = (int) (fabs(Coord(N, axis) - Min[axis]) + 0.5);
-                dMax = (int) (fabs(Coord(N, axis) - Max[axis]) + 0.5);
-                N->Rank = dMin < dMax ? dMin : dMax;
+                if (N->X >= Min[0] && N->X <= Max[0]) {
+                    if (N->Y >= Min[1] && N->Y <= Max[1])
+                        N->Rank = dX < dY ? dX : dY;
+                    else
+                        N->Rank = dY;
+                } else if (N->Y >= Min[1] && N->Y <= Max[1])
+                    N->Rank = dX;
+                else
+                    N->Rank = dX + dY;
             } else {
-                N->Rank = 0;
-                for (i = CoordType == THREED_COORDS ? 2 : 1; i >= 0; i--) {
-                    dMin = (int) (fabs(Coord(N, i) - Min[i]) + 0.5);
-                    dMax = (int) (fabs(Coord(N, i) - Max[i]) + 0.5);
-                    d = dMin < dMax ? dMin : dMax;
-                    if (d > N->Rank)
-                        N->Rank = d;
-                }
+                dMin = (int) (fabs(Coord(N, 2) - Min[2]) + 0.5);
+                dMax = (int) (fabs(Coord(N, 2) - Max[2]) + 0.5);
+                dZ = dMin < dMax ? dMin : dMax;
+                if (N->X >= Min[0] && N->X <= Max[0]) {
+                    if (N->Y >= Min[1] && N->Y <= Max[1]) {
+                        if (N->Z >= Min[2] && N->Z <= Max[2]) {
+                            N->Rank = dX < dY ? dX : dY;
+                            N->Rank = dZ < N->Rank ? dZ : N->Rank;
+                        } else 
+                            N->Rank = dZ;
+                    } else if (N->Z >= Min[2] && N->Z <= Max[2])
+                        N->Rank = dY;
+                    else
+                        N->Rank = dY + dZ;
+                } else if (N->Y >= Min[1] && N->Y <= Max[1]) {
+                      if (N->Z >= Min[2] && N->Z <= Max[2])
+                          N->Rank = dX;
+                      else
+                          N->Rank = dX + dZ;
+                } else if (N->Z >= Min[2] && N->Z <= Max[2])
+                    N->Rank = dX + dY;
+                else
+                    N->Rank = dX + dY + dZ;
             }
         }
         N->Subproblem = 0;

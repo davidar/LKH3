@@ -54,9 +54,9 @@ void GenerateCandidates(int MaxCandidates, GainType MaxAlpha,
 
     if (MaxCandidates > 0) {
         do {
-            assert(From->CandidateSet =
-                   (Candidate *) malloc((MaxCandidates + 1) *
-                                        sizeof(Candidate)));
+            From->CandidateSet =
+               (Candidate *) malloc((MaxCandidates + 1) *
+                                    sizeof(Candidate));
             From->CandidateSet[0].To = 0;
         }
         while ((From = From->Suc) != FirstNode);

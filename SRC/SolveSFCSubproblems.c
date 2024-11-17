@@ -26,7 +26,7 @@ void SolveSFCSubproblems()
     double EntryTime = GetTime();
 
     SFCTour(SierpinskiPartitioning ? SIERPINSKI : MOORE);
-    assert(Suc = (Node **) malloc((1 + Dimension) * sizeof(Node *)));
+    Suc = (Node **) malloc((1 + Dimension) * sizeof(Node *));
     N = FirstNode;
     do
         Suc[N->Id] = N->Suc;

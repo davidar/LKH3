@@ -16,6 +16,8 @@ GainType Penalty_RCTVRP()
     do {
         CurrentRoute = N;
         RiskSum = CostSum = DemandSum = 0;
+        if (N->Earliest > 0)
+            CostSum = N->Earliest;
         do {
             if (N->Id <= Dim && N != Depot) {
                 if (CostSum < N->Earliest)

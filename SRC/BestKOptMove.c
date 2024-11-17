@@ -108,12 +108,12 @@ static GainType BestKOptMoveRec(int k, GainType G0)
             G2 = G1 + C(t3, t4);
             G3 = MINUS_INFINITY;
             if (t4 != t1 && !Forbidden(t4, t1) && !Added(t4, t1) &&
-                (CurrentPenalty > 0 || TSPTW_Makespan ||
+                (PenaltyAware || TSPTW_Makespan ||
                  ((!c || G2 - c(t4, t1) > 0) &&
                   (G3 = G2 - C(t4, t1)) > 0)) && FeasibleKOptMove(k)) {
-                if (CurrentPenalty > 0 || TSPTW_Makespan)
+                if (PenaltyAware || TSPTW_Makespan)
                     G3 = G2 - C(t4, t1);
-                if (CurrentPenalty || TSPTW_Makespan || G3 > 0) {
+                if (PenaltyAware || TSPTW_Makespan || G3 > 0) {
                     MakeKOptMove(k);
                     if (Improvement(&G3, t1, SUCt1)) {
                         UnmarkAdded(t2, t3);
@@ -220,8 +220,11 @@ static GainType BestKOptMoveRec(int k, GainType G0)
                     || Added(t4, t1))
                     continue;
                 G2 = G1 + C(t3, t4);
-                if ((!c || G2 - c(t4, t1) > 0)
-                    && (Gain = G2 - C(t4, t1)) > 0) {
+                if (PenaltyAware || TSPTW_Makespan ||
+                    ((!c || G2 - c(t4, t1) > 0) &&
+                     (Gain = G2 - C(t4, t1)) > 0)) {
+                    if (PenaltyAware || TSPTW_Makespan)
+                        Gain = G2 - C(t4, t1);
                     incl[incl[i ^ 1] = 1] = i ^ 1;
                     incl[incl[i] = 2 * k - 2] = i;
                     if (FeasibleKOptMove(k - 1)) {

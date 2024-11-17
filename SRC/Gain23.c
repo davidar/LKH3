@@ -38,7 +38,7 @@ GainType Gain23()
 {
     static Node *s1 = 0;
     static short OldReversed = 0;
-    Node *s2, *s3, *s4, *s5, *s6 = 0, *s7, *s8 = 0, *s1Stop;
+    Node *s2, *s3, *s4, *s5, *s6 = 0, *s7, *s8 = 0, *s1Stop, *SUCs1;
     Candidate *Ns2, *Ns4, *Ns6;
     GainType G0, G1, G2, G3, G4, G5, G6, Gain, Gain6;
     int X2, X4, X6, X8, Case6 = 0, Case8 = 0;
@@ -46,6 +46,7 @@ GainType Gain23()
 
     if (!s1 || s1->Subproblem != FirstNode->Subproblem)
         s1 = FirstNode;
+    SUCs1 = SUC(s1);
     s1Stop = s1;
     for (X2 = 1; X2 <= 2; X2++) {
         Reversed = X2 == 1 ? OldReversed : (OldReversed ^= 1);
@@ -80,10 +81,10 @@ GainType Gain23()
                     }
                     if (X4 == 2 &&
                         !Forbidden(s4, s1) &&
-                        (CurrentPenalty > 0 ||
+                        (PenaltyAware ||
                          TSPTW_Makespan || !c || G2 - c(s4, s1) > 0)) {
                         Gain = G2 - C(s4, s1);
-                        if (CurrentPenalty > 0 ||
+                        if (PenaltyAware ||
                             TSPTW_Makespan || Gain > 0) {
                             Swap1(s1, s2, s3);
                             if (Improvement(&Gain, s1, s2))
@@ -94,7 +95,7 @@ GainType Gain23()
                         continue;
                     Breadth4 = 0;
                     /* Try any gainful nonfeasible 3- or 4-opt move
-                       folllowed by a 2-opt move */
+                       followed by a 2-opt move */
                     /* Choose (s4,s5) as a candidate edge emanating from s4 */
                     for (Ns4 = s4->CandidateSet; (s5 = Ns4->To); Ns4++) {
                         if (s5 == s4->Pred || s5 == s4->Suc ||
@@ -131,11 +132,11 @@ GainType Gain23()
                             G4 = G3 + C(s5, s6);
                             Gain6 = 0;
                             if (!Forbidden(s6, s1) &&
-                                (CurrentPenalty > 0 ||
+                                (PenaltyAware ||
                                  TSPTW_Makespan ||
                                  !c || G4 - c(s6, s1) > 0) &&
                                 (Gain6 = G4 - C(s6, s1)) > 0) {
-                                if (CurrentPenalty > 0 ||
+                                if (PenaltyAware ||
                                     TSPTW_Makespan || Gain6 > 0) {
                                     if (Case6 <= 2 || Case6 == 5 ||
                                         Case6 == 6) {
@@ -236,11 +237,11 @@ GainType Gain23()
                                         || Forbidden(s8, s1))
                                         continue;
                                     G6 = G5 + C(s7, s8);
-                                    if (CurrentPenalty > 0 ||
+                                    if (PenaltyAware ||
                                         TSPTW_Makespan ||
-                                        !c || G2 - c(s8, s1) > 0) {
+                                        !c || G6 - c(s8, s1) > 0) {
                                         Gain = G6 - C(s8, s1);
-                                        if (CurrentPenalty > 0 ||
+                                        if (PenaltyAware ||
                                             TSPTW_Makespan || Gain > 0) {
                                             if (Case8 <= 15) {
                                                 Make4OptMove(s1, s2, s3,
@@ -272,6 +273,8 @@ GainType Gain23()
         }
         while ((s1 = s2) != s1Stop);
     }
+    if (Asymmetric && SUC(s1) != SUCs1)
+        Reversed ^= 1;
     return 0;
 }
 

@@ -6,10 +6,10 @@
  * This file contains the main function of the program.
  */
 
-int main(int argc, char *argv[])
+int main(int argc, char * argv[])
 {
     GainType Cost, OldOptimum;
-    double Time, LastTime = GetTime();
+    double Time, LastTime;
     Node *N;
     int i;
 
@@ -17,9 +17,12 @@ int main(int argc, char *argv[])
     if (argc >= 2)
         ParameterFileName = argv[1];
     ReadParameters();
+    StartTime = LastTime = GetTime();
     MaxMatrixDimension = 20000;
-    MergeWithTour = Recombination == IPT ? MergeWithTourIPT :
-        MergeWithTourGPX2;
+    MergeWithTour =
+        Recombination == GPX2 ? MergeWithTourGPX2 :
+        Recombination == CLARIST ? MergeWithTourCLARIST :
+                                   MergeWithTourIPT;
     ReadProblem();
     if (SubproblemSize > 0) {
         if (DelaunayPartitioning)
@@ -69,6 +72,12 @@ int main(int argc, char *argv[])
 
     for (Run = 1; Run <= Runs; Run++) {
         LastTime = GetTime();
+        if (LastTime - StartTime >= TotalTimeLimit) {
+            if (TraceLevel >= 1)
+                printff("*** Time limit exceeded ***\n");
+            Run--;
+            break;
+        }
         Cost = FindTour();      /* using the Lin-Kernighan heuristic */
         if (MaxPopulationSize > 1 && !TSPTW_Makespan) {
             /* Genetic algorithm */
@@ -81,22 +90,20 @@ int main(int argc, char *argv[])
                     (CurrentPenalty < OldPenalty ||
                      (CurrentPenalty == OldPenalty && Cost < OldCost))) {
                     if (CurrentPenalty)
-                        printff("  Merged with %d: Cost = " GainFormat,
-                                i + 1, Cost);
-                    else
                         printff("  Merged with %d: Cost = " GainFormat "_"
                                 GainFormat, i + 1, CurrentPenalty, Cost);
+                    else
+                        printff("  Merged with %d: Cost = " GainFormat,
+                                i + 1, Cost);
                     if (Optimum != MINUS_INFINITY && Optimum != 0) {
-                        if (ProblemType != CCVRP && ProblemType != TRP &&
-                            ProblemType != MLP &&
-                            MTSPObjective != MINMAX &&
-                            MTSPObjective != MINMAX_SIZE)
+                        if (OptimizePenalty)
                             printff(", Gap = %0.4f%%",
-                                    100.0 * (Cost - Optimum) / Optimum);
-                        else
-                            printff(", Gap = %0.4f%%",
+                                    (ProblemType == MSCTSP ? -1 : 1) *
                                     100.0 * (CurrentPenalty - Optimum) /
                                     Optimum);
+                        else
+                            printff(", Gap = %0.4f%%",
+                                    100.0 * (Cost - Optimum) / Optimum);
                     }
                     printff("\n");
                 }
@@ -125,14 +132,13 @@ int main(int argc, char *argv[])
             WriteTour(TourFileName, BestTour, BestCost);
         }
         OldOptimum = Optimum;
-        if (!Penalty ||
-            (MTSPObjective != MINMAX && MTSPObjective != MINMAX_SIZE)) {
+        if (!Penalty || !OptimizePenalty) {
             if (CurrentPenalty == 0 && Cost < Optimum)
                 Optimum = Cost;
         } else if (CurrentPenalty < Optimum)
             Optimum = CurrentPenalty;
         if (Optimum < OldOptimum) {
-            printff("*** New OPTIMUM = " GainFormat " ***\n\n", Optimum);
+            printff("*** New OPTIMUM = " GainFormat " ***\n", Optimum);
             if (FirstNode->InputSuc) {
                 Node *N = FirstNode;
                 while ((N = N->InputSuc = N->Suc) != FirstNode);
@@ -146,16 +152,14 @@ int main(int argc, char *argv[])
             printff("\n");
         }
         if (StopAtOptimum && MaxPopulationSize >= 1) {
-            if (ProblemType != CCVRP && ProblemType != TRP &&
-                ProblemType != MLP &&
-                MTSPObjective != MINMAX &&
-                MTSPObjective != MINMAX_SIZE ?
-                CurrentPenalty == 0 && Cost == Optimum :
-                CurrentPenalty == Optimum) {
+            if (OptimizePenalty ?
+                CurrentPenalty == Optimum :
+                CurrentPenalty == 0 && Cost == Optimum) {
                 Runs = Run;
                 break;
             }
         }
+        IsChild = 0;
         if (PopulationSize >= 2 &&
             (PopulationSize == MaxPopulationSize ||
              Run >= 2 * MaxPopulationSize) && Run < Runs) {
@@ -166,6 +170,7 @@ int main(int argc, char *argv[])
                 Parent2 = LinearSelection(PopulationSize, 1.25);
             while (Parent2 == Parent1);
             ApplyCrossover(Parent1, Parent2);
+            IsChild = 1;
             N = FirstNode;
             do {
                 if (ProblemType != HCP && ProblemType != HPP) {
@@ -174,8 +179,7 @@ int main(int argc, char *argv[])
                     AddCandidate(N->Suc, N, d, INT_MAX);
                 }
                 N = N->InitialSuc = N->Suc;
-            }
-            while (N != FirstNode);
+            } while (N != FirstNode);
         }
         SRandom(++Seed);
     }
@@ -200,30 +204,36 @@ int main(int argc, char *argv[])
         CurrentPenalty = BestPenalty;
         MTSP_Report(BestPenalty, BestCost);
         MTSP_WriteSolution(MTSPSolutionFileName, BestPenalty, BestCost);
-        SINTEF_WriteSolution(SINTEFSolutionFileName, BestCost);
     }
+    SINTEF_WriteSolution(SINTEFSolutionFileName, BestCost);
     if (ProblemType == ACVRP ||
         ProblemType == BWTSP ||
         ProblemType == CCVRP ||
         ProblemType == CTSP ||
         ProblemType == CVRP ||
         ProblemType == CVRPTW ||
+        ProblemType == GCTSP ||
+        ProblemType == CCCTSP ||
         ProblemType == MLP ||
+        ProblemType == MSCTSP ||
         ProblemType == M_PDTSP ||
         ProblemType == M1_PDTSP ||
         MTSPObjective != -1 ||
         ProblemType == ONE_PDTSP ||
         ProblemType == OVRP ||
+        ProblemType == PCTSP ||
         ProblemType == PDTSP ||
         ProblemType == PDTSPL ||
         ProblemType == PDPTW ||
+        ProblemType == PTSP ||
         ProblemType == RCTVRP ||
         ProblemType == RCTVRPTW ||
         ProblemType == SOP ||
         ProblemType == TRP ||
         ProblemType == TSPTW ||
         ProblemType == VRPB ||
-        ProblemType == VRPBTW || ProblemType == VRPPD) {
+        ProblemType == VRPBTW ||
+        ProblemType == VRPPD) {
         printff("Best %s solution:\n", Type);
         CurrentPenalty = BestPenalty;
         SOP_Report(BestCost);

@@ -40,7 +40,7 @@ GainType PatchCycles(int k, GainType Gain)
     FindPermutation(k);
     M = Cycles(k);
     PenaltyGain = 0;
-    if (M == 1 && (CurrentPenalty > 0 || TSPTW_Makespan || Gain > 0)) {
+    if (M == 1 && (PenaltyAware || TSPTW_Makespan || Gain > 0)) {
         MakeKOptMove(k);
         if (Improvement(&Gain, FirstNode, SUCFirstNode))
             return Gain;
@@ -109,8 +109,7 @@ static GainType PatchCyclesRec(int k, int m, int M, GainType G0)
             G2 = G1 + C(s3, s4);
             if (M > 2) {
                 if (!cycleSaved) {
-                    assert(cycleSaved =
-                           (int *) malloc(2 * k * sizeof(int)));
+                    cycleSaved = (int *) malloc(2 * k * sizeof(int));
                     memcpy(cycleSaved, cycle + 1, 2 * k * sizeof(int));
                 }
                 for (i = 1; i <= 2 * k; i++)
@@ -138,13 +137,12 @@ static GainType PatchCyclesRec(int k, int m, int M, GainType G0)
                     }
                 }
             } else if (!Forbidden(s4, s1) &&
-                       (CurrentPenalty > 0 ||
+                       (PenaltyAware ||
                         (!c || G2 - c(s4, s1) > 0))) {
                 Gain = G2 - C(s4, s1);
-                if (CurrentPenalty > 0 || TSPTW_Makespan || Gain > 0) {
+                if (PenaltyAware || TSPTW_Makespan || Gain > 0) {
                     if (!pSaved) {
-                        assert(pSaved =
-                               (int *) malloc(2 * k * sizeof(int)));
+                        pSaved = (int *) malloc(2 * k * sizeof(int));
                         memcpy(pSaved, p + 1, 2 * k * sizeof(int));
                     }
                     incl[incl[2 * k + 1] = 2 * (k + m)] = 2 * k + 1;
@@ -205,12 +203,11 @@ static GainType PatchCyclesRec(int k, int m, int M, GainType G0)
                             continue;
                         G4 = G3 + C(s5, s6);
                         if (!pSaved) {
-                            assert(pSaved =
-                                   (int *) malloc(2 * k * sizeof(int)));
+                            pSaved = (int *) malloc(2 * k * sizeof(int));
                             memcpy(pSaved, p + 1, 2 * k * sizeof(int));
                         }
                         Gain = G4 - C(s6, s1);
-                        if (CurrentPenalty > 0 ||
+                        if (PenaltyAware ||
                             TSPTW_Makespan || Gain > 0) {
                             t[2 * (k + m) + 1] = s5;
                             t[2 * (k + m) + 2] = s6;
@@ -232,7 +229,7 @@ static GainType PatchCyclesRec(int k, int m, int M, GainType G0)
     if (S4) {
         int OldCycle = CurrentCycle;
         if (!pSaved) {
-            assert(pSaved = (int *) malloc(2 * k * sizeof(int)));
+            pSaved = (int *) malloc(2 * k * sizeof(int));
             memcpy(pSaved, p + 1, 2 * k * sizeof(int));
         }
         t[2 * (k + m) - 1] = S3;
@@ -301,7 +298,7 @@ static int ShortestCycle(int M, int k)
     int i, Cycle, MinCycle = 0;
     int *Size, MinSize = INT_MAX;
 
-    assert(Size = (int *) calloc(1 + M, sizeof(int)));
+    Size = (int *) calloc(1 + M, sizeof(int));
     p[0] = p[2 * k];
     for (i = 0; i < 2 * k; i += 2)
         Size[cycle[p[i]]] += SegmentSize(t[p[i]], t[p[i + 1]]);

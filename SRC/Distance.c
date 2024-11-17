@@ -105,8 +105,8 @@ int Distance_GEO(Node * Na, Node * Nb)
     q1 = cos(NaLongitude - NbLongitude);
     q2 = cos(NaLatitude - NbLatitude);
     q3 = cos(NaLatitude + NbLatitude);
-    return (int) (RRR * acos(0.5 * ((1.0 + q1) * q2 - (1.0 - q1) * q3)) +
-                  1.0);
+    return (int) (Scale * 
+        (RRR * acos(0.5 * ((1.0 + q1) * q2 - (1.0 - q1) * q3)) + 1.0));
 }
 
 #undef M_PI
@@ -124,7 +124,7 @@ int Distance_GEOM(Node * Na, Node * Nb)
     double q4 = cos((longi - longj) / 2.0);
     double q2 = sin(lati + latj) * q3 * q3 - sin(lati - latj) * q4 * q4;
     double q5 = cos(lati - latj) * q4 * q4 - cos(lati + latj) * q3 * q3;
-    return (int) (M_RRR * atan2(sqrt(q1 * q1 + q2 * q2), q5) + 1.0);
+    return (int) (Scale * (M_RRR * atan2(sqrt(q1 * q1 + q2 * q2), q5) + 1.0));
 }
 
 int Distance_MAN_2D(Node * Na, Node * Nb)
@@ -136,8 +136,7 @@ int Distance_MAN_2D(Node * Na, Node * Nb)
 int Distance_MAN_3D(Node * Na, Node * Nb)
 {
     return (int) (Scale * (fabs(Na->X - Nb->X) +
-                           fabs(Na->Y - Nb->Y) + fabs(Na->Z - Nb->Z)) +
-                  0.5);
+                           fabs(Na->Y - Nb->Y) + fabs(Na->Z - Nb->Z)) + 0.5);
 }
 
 int Distance_MAX_2D(Node * Na, Node * Nb)
@@ -188,7 +187,7 @@ static double Meeus(double lat1, double lon1, double lat2, double lon2)
     d = 2 * w * a;
     h1 = (3 * r - 1) / 2 / c;
     h2 = (3 * r + 1) / 2 / s;
-    return d * (1 + fl * (h1 * sf * (1 - sg) - h2 * (1 - sf) * sg));
+    return Scale * d * (1 + fl * (h1 * sf * (1 - sg) - h2 * (1 - sf) * sg));
 }
 
 int Distance_GEO_MEEUS(Node * Na, Node * Nb)
@@ -253,7 +252,7 @@ int Distance_XRAY1(Node * Na, Node * Nb)
     double distc = fabs(Na->Y - Nb->Y);
     double distt = fabs(Na->Z - Nb->Z);
     double cost = max(distp, max(distc, distt));
-    return (int) (100 * cost + 0.5);
+    return (int) (Scale * 100 * cost + 0.5);
 }
 
 int Distance_XRAY2(Node * Na, Node * Nb)
@@ -263,5 +262,5 @@ int Distance_XRAY2(Node * Na, Node * Nb)
     double distc = fabs(Na->Y - Nb->Y);
     double distt = fabs(Na->Z - Nb->Z);
     double cost = max(distp / 1.25, max(distc / 1.5, distt / 1.15));
-    return (int) (100 * cost + 0.5);
+    return (int) (Scale * 100 * cost + 0.5);
 }

@@ -1,4 +1,5 @@
 #include "LKH.h"
+#include "Segment.h"
   
 /* The CTSP_InitialTour function computes an initial tour for a
  * colored TSP.
@@ -32,14 +33,19 @@ GainType CTSP_InitialTour()
     while ((N = N->Suc) != FirstNode);
     Cost /= Precision;
     CurrentPenalty = PLUS_INFINITY;
-    CurrentPenalty = Penalty();
+    CurrentPenalty = Penalty ? Penalty() : 0;
     if (TraceLevel >= 1) {
-        if (Salesmen > 1 || ProblemType == SOP)
-            printff(GainFormat "_" GainFormat, CurrentPenalty, Cost);
-        else
-            printff(GainFormat, Cost);
-        if (Optimum != MINUS_INFINITY && Optimum != 0)
-            printff(", Gap = %0.2f%%", 100.0 * (Cost - Optimum) / Optimum);
+        printff(GainFormat "_" GainFormat, CurrentPenalty, Cost);
+        if (Optimum != MINUS_INFINITY && Optimum != 0) {
+            if (ProblemType == CTSP || ProblemType == SOP ||
+                ProblemType == PCTSP)
+                printff(", Gap = %0.2f%%",
+                        100.0 * (Cost - Optimum) / Optimum);
+            else 
+                printff(", Gap = %0.2f%%",
+                        (ProblemType == MSCTSP ? -1 : 1) *
+                        100.0 * (CurrentPenalty - Optimum) / Optimum);
+        }
         printff(", Time = %0.2f sec.\n", fabs(GetTime() - EntryTime));
     }
     return Cost;

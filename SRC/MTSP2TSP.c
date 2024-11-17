@@ -29,13 +29,16 @@ void MTSP2TSP()
             Penalty = Penalty_MTSP_MINMAX_SIZE;
     } else if (ProblemType == CVRP)
         Penalty = Penalty_CVRP;
-    if (ProblemType == CVRP || ProblemType == CTSP || ProblemType == TSP) {
+    if (ProblemType == CVRP || ProblemType == CTSP || 
+        ProblemType == GCTSP || ProblemType == CCCTSP ||
+        ProblemType == CBTSP || ProblemType == CBnTSP ||
+        ProblemType == TSP || ProblemType == CluVRP ||
+        ProblemType == SoftCluVRP || ProblemType == MSCTSP) {
         int NewDimension = Dimension + Salesmen - 1;
         Node *Prev = 0;
         Node *OldNodeSet = NodeSet;
-        assert(NodeSet =
-               (Node *) realloc(NodeSet,
-                                (1 + NewDimension) * sizeof(Node)));
+        NodeSet =
+           (Node *) realloc(NodeSet, (1 + NewDimension) * sizeof(Node));
         Dim = NewDimension - Salesmen + 1;
         for (i = 1; i <= Dim; i++) {
             N = &NodeSet[i];
@@ -55,6 +58,9 @@ void MTSP2TSP()
                 *N = *Depot;
                 N->FixedTo1 = N->FixedTo2 = 0;
                 N->Id = i;
+                if (MergeTourFiles >= 1)
+                    N->MergeSuc =
+                       (Node **) calloc(MergeTourFiles, sizeof(Node *));
             }
             if (i == 1)
                 FirstNode = N;
@@ -66,12 +72,16 @@ void MTSP2TSP()
         if (MergeTourFiles >= 1) {
             for (i = Dimension + 1; i <= NewDimension; i++) {
                 N = &NodeSet[i];
-                assert(N->MergeSuc =
-                       (Node **) calloc(MergeTourFiles, sizeof(Node *)));
+                N->MergeSuc =
+                   (Node **) calloc(MergeTourFiles, sizeof(Node *));
             }
         }
         Dimension = DimensionSaved = NewDimension;
-        if (ProblemType != CTSP && Salesmen <= Dim && MTSPMinSize > 0 &&
+        if (ProblemType != CTSP &&
+            ProblemType != CCCTSP &&
+            ProblemType != GCTSP &&
+            ProblemType != MSCTSP &&
+            Salesmen <= Dim && MTSPMinSize > 0 &&
             !AnyFixed) {
             HeapMake(Dim - 1);
             for (i = 1; i <= Dim; i++) {
@@ -94,7 +104,41 @@ void MTSP2TSP()
         NodeSet[i].Latest = Depot->Latest;
         NodeSet[i].Demand = Depot->Demand;
     }
-    OldDistance = Distance;
-    Distance = Distance_MTSP;
+    if (ProblemType != PCTSP) {
+        OldDistance = Distance;
+        Distance = Distance_MTSP;
+    } else  {
+        int NewDimension = Dimension;
+        Node *Prev = 0;
+        Depot = &NodeSet[MTSPDepot];
+        Depot->Color = 0;
+        FirstNode = &NodeSet[1];
+        for (i = Dim + 1; i <= Dim + Salesmen - 1; i++) {
+            N = &NodeSet[i];
+            free(N->ColorAllowed);
+            *N = *Depot;
+        }
+        for (i = 1; i <= NewDimension; i++, Prev = N) {
+            N = &NodeSet[i];
+            N->Id = i;
+            if (i <= DimensionSaved) {
+                N->FixedTo1 = &NodeSet[DimensionSaved + i];
+                NodeSet[DimensionSaved + i].FixedTo1 = N;
+            }
+            if (i == 1)
+                FirstNode = N;
+            else
+                Link(Prev, N);
+            N->Special = 0;
+        }
+        Link(N, FirstNode);
+        if (MergeTourFiles >= 1) {
+            for (i = Dim + 1; i <= NewDimension; i++) {
+                N = &NodeSet[i];
+                N->MergeSuc =
+                    (Node**) calloc(MergeTourFiles, sizeof(Node*));
+            }
+        }
+    }
     WeightType = SPECIAL;
 }

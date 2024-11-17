@@ -77,7 +77,7 @@ void delaunay(int n)
         N = N->Suc;
     }
 
-    assert(p_sorted = (point **) malloc(n * sizeof(point *)));
+    p_sorted = (point **) malloc(n * sizeof(point *));
     for (i = 0; i < n; i++)
         p_sorted[i] = p_array + i;
     qsort(p_sorted, n, sizeof(point *), compare);
@@ -474,10 +474,10 @@ static void alloc_memory(int n)
     edge *e;
     int i;
 
-    assert(p_array = (point *) calloc(n, sizeof(point)));
+    p_array = (point *) calloc(n, sizeof(point));
     n_free_e = 3 * n;
-    assert(e_array = e = (edge *) calloc(n_free_e, sizeof(edge)));
-    assert(free_list_e = (edge **) calloc(n_free_e, sizeof(edge *)));
+    e_array = e = (edge *) calloc(n_free_e, sizeof(edge));
+    free_list_e = (edge **) calloc(n_free_e, sizeof(edge *));
     for (i = 0; i < n_free_e; i++, e++)
         free_list_e[i] = e;
 }

@@ -13,8 +13,8 @@
 #define Dprev(e) ((e)->dprev)
 
 #define Other_point(e, p) ((e)->org == p ? (e)->dest : (e)->org)
-#define Next(e,p) ((e)->org == p ? (e)->onext : (e)->dnext)
-#define Prev(e,p) ((e)->org == p ? (e)->oprev : (e)->dprev)
+#define Next(e, p) ((e)->org == p ? (e)->onext : (e)->dnext)
+#define Prev(e, p) ((e)->org == p ? (e)->oprev : (e)->dprev)
 
 #define Vector(p1, p2, u, v) (u = p2->x - p1->x, v = p2->y - p1->y)
 #define Cross_product_2v(u1, v1, u2, v2) (u1 * v2 - v1 * u2)

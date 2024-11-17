@@ -138,7 +138,7 @@ GainType GreedyTour()
                 }
             }
         } else {
-            assert(Perm = (Node **) malloc(Count * sizeof(Node *)));
+            Perm = (Node **) malloc(Count * sizeof(Node *));
             for (From = FirstNode, i = 0; i < Count; From = From->Next)
                 if (From->Nearest)
                     Perm[i++] = From;
@@ -234,7 +234,7 @@ GainType GreedyTour()
     CurrentPenalty = PLUS_INFINITY;
     CurrentPenalty = Penalty ? Penalty() : 0;
     if (TraceLevel >= 1) {
-        if (Salesmen > 1 || ProblemType == SOP)
+        if (Salesmen > 1 || ProblemType == SOP || ProblemType == PCTSP)
             printff(GainFormat "_" GainFormat, CurrentPenalty, Cost);
         else
             printff(GainFormat, Cost);
@@ -359,8 +359,7 @@ static Node *NearestInList(Node * From, Node * First)
 static int MayBeAddedToFragments(Node * From, Node * To)
 {
     return From != To && From->Degree != 2 && To->Degree != 2 &&
-        (From->Tail != To || EdgesInFragments == Dimension - 1) &&
-        !Forbidden(From, To);
+        (From->Tail != To || EdgesInFragments == Dimension - 1);
 }
 
 /*
@@ -416,3 +415,4 @@ static int compareCost(const void *Na, const void *Nb)
 {
     return (*(Node **) Na)->Cost - (*(Node **) Nb)->Cost;
 }
+

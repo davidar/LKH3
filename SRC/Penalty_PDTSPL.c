@@ -12,7 +12,7 @@ GainType Penalty_PDTSPL()
     int StackTop;
 
     if (!Stack)
-        assert(Stack = (int *) malloc(Dim * sizeof(int)));
+        Stack = (int *) malloc(Dim * sizeof(int));
     if (!StartRoute)
         StartRoute = Depot;
     if (StartRoute->Id > DimensionSaved)

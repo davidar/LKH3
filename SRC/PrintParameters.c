@@ -4,7 +4,7 @@
 /*
  * The PrintParameters function prints the problem parameters to
  * standard output.
-*/
+ */
 
 void PrintParameters()
 {
@@ -29,6 +29,10 @@ void PrintParameters()
             CandidateSetType == POPMUSIC ? "POPMUSIC" :
             CandidateSetType == QUADRANT ? "QUADRANT" : "",
             DelaunayPure ? " PURE" : "");
+    if (DistanceLimit == DBL_MAX)
+        printff("# DISTANCE =\n");
+    else
+        printff("DISTANCE = %0.1f\n", DistanceLimit);
     if (Salesmen > 1)
         printff("DEPOT = %d\n", MTSPDepot);
     else
@@ -48,6 +52,7 @@ void PrintParameters()
             ExtraCandidateSetSymmetric ? "SYMMETRIC" : "");
     printff("EXTRA_CANDIDATE_SET_TYPE = %s\n",
             ExtraCandidateSetType == NN ? "NEAREST-NEIGHBOR" :
+            ExtraCandidateSetType == POPMUSIC ? "POPMUSIC" :
             ExtraCandidateSetType == QUADRANT ? "QUADRANT" : "");
     printff("GAIN23 = %s\n", Gain23Used ? "YES" : "NO");
     printff("GAIN_CRITERION = %s\n", GainCriterionUsed ? "YES" : "NO");
@@ -58,13 +63,16 @@ void PrintParameters()
     printff("INITIAL_STEP_SIZE = %d\n", InitialStepSize);
     printff("INITIAL_TOUR_ALGORITHM = %s\n",
             InitialTourAlgorithm == BORUVKA ? "BORUVKA" :
+            InitialTourAlgorithm == CTSP_ALG ? "CTSP" :
             InitialTourAlgorithm == CVRP_ALG ? "CVRP" :
+            InitialTourAlgorithm == GCTSP_ALG ? "GCTSP" :
             InitialTourAlgorithm == GREEDY ? "GREEDY" :
             InitialTourAlgorithm == MOORE ? "MOORE" :
             InitialTourAlgorithm == MTSP_ALG ? "MTSP" :
             InitialTourAlgorithm == NEAREST_NEIGHBOR ? "NEAREST-NEIGHBOR" :
             InitialTourAlgorithm ==
             QUICK_BORUVKA ? "QUICK-BORUVKA" :
+            InitialTourAlgorithm == PCTSP_ALG ? "PCTSP" :
             InitialTourAlgorithm == SIERPINSKI ? "SIERPINSKI" :
             InitialTourAlgorithm == SOP_ALG ? "SOP" :
             InitialTourAlgorithm == TSPDL_ALG ? "TSPDL" : "WALK");
@@ -75,6 +83,7 @@ void PrintParameters()
     printff("%sINPUT_TOUR_FILE = %s\n",
             InputTourFileName ? "" : "# ",
             InputTourFileName ? InputTourFileName : "");
+    printff("K = %d\n", k);
     printff("KICK_TYPE = %d\n", KickType);
     printff("KICKS = %d\n", Kicks);
     if (MaxBreadth == INT_MAX)
@@ -143,20 +152,26 @@ void PrintParameters()
         printff("# ");
     printff("POPULATION_SIZE = %d\n", MaxPopulationSize);
     printff("PRECISION = %d\n", Precision);
+    if (Probability < 100)
+        printff("PROBABILITY = %d\n", Probability);
+    else
+        printff("# PROBABILITY =\n");
     printff("%sPROBLEM_FILE = %s\n",
             ProblemFileName ? "" : "# ",
             ProblemFileName ? ProblemFileName : "");
-    printff("RECOMBINATION = %s\n", Recombination == IPT ? "IPT" :
-            Recombination == GPX2 ? "GPX2" : "UNKNOWN");
+    printff("RECOMBINATION = %s\n",
+           Recombination == IPT ? "IPT" :
+           Recombination == GPX2 ? "GPX2" :
+           Recombination == CLARIST ? "CLARIST" :
+           "UNKNOWN");
     printff("RESTRICTED_SEARCH = %s\n", RestrictedSearch ? "YES" : "NO");
     printff("RUNS = %d\n", Runs);
     printff("SALESMEN = %d\n", Salesmen);
     printff("SCALE = %d\n", Scale);
     printff("SEED = %u\n", Seed);
-    if (Salesmen > 1)
-        printff("%sSINTEF_SOLUTION_FILE = %s\n",
-                SINTEFSolutionFileName ? "" : "# ",
-                SINTEFSolutionFileName ? SINTEFSolutionFileName : "");
+    printff("%sSINTEF_SOLUTION_FILE = %s\n",
+            SINTEFSolutionFileName ? "" : "# ",
+            SINTEFSolutionFileName ? SINTEFSolutionFileName : "");
     printff("STOP_AT_OPTIMUM = %s\n", StopAtOptimum ? "YES" : "NO");
     printff("SUBGRADIENT = %s\n", Subgradient ? "YES" : "NO");
     if (SubproblemSize == 0)
@@ -184,8 +199,13 @@ void PrintParameters()
         printff("# TIME_LIMIT =\n");
     else
         printff("TIME_LIMIT = %0.1f\n", TimeLimit);
+    if (TotalTimeLimit == DBL_MAX)
+        printff("# TOTAL_TIME_LIMIT =\n");
+    else
+        printff("TOTAL_TIME_LIMIT = %0.1f\n", TotalTimeLimit);
     printff("%sTOUR_FILE = %s\n",
             TourFileName ? "" : "# ", TourFileName ? TourFileName : "");
     printff("TRACE_LEVEL = %d\n", TraceLevel);
     printff("VEHICLES = %d\n\n", Salesmen);
 }
+

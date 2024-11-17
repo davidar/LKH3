@@ -25,19 +25,19 @@ char *ReadLine(FILE * InputFile)
     int i, c;
 
     if (Buffer == 0)
-        assert(Buffer = (char *) malloc(MaxBuffer = 80));
+        Buffer = (char *) malloc(MaxBuffer = 80);
     for (i = 0; (c = fgetc(InputFile)) != EOF && !EndOfLine(InputFile, c);
          i++) {
         if (i >= MaxBuffer - 1) {
             MaxBuffer *= 2;
-            assert(Buffer = (char *) realloc(Buffer, MaxBuffer));
+            Buffer = (char *) realloc(Buffer, MaxBuffer);
         }
         Buffer[i] = (char) c;
     }
     Buffer[i] = '\0';
     if (!LastLine || (int) strlen(LastLine) < i) {
         free(LastLine);
-        assert(LastLine = (char *) malloc((i + 1) * sizeof(char)));
+        LastLine = (char *) malloc((i + 1) * sizeof(char));
     }
     strcpy(LastLine, Buffer);
     return c == EOF && i == 0 ? 0 : Buffer;

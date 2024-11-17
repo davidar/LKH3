@@ -19,11 +19,12 @@ int AddCandidate(Node * From, Node * To, int Cost, int Alpha)
     int Count;
     Candidate *NFrom;
 
-    if (From->Subproblem != FirstNode->Subproblem)
+    if (From->Subproblem != FirstNode->Subproblem ||
+        To->Subproblem != FirstNode->Subproblem ||
+        Cost == INT_MAX)
         return 0;
     if (From->CandidateSet == 0)
-        assert(From->CandidateSet =
-               (Candidate *) calloc(3, sizeof(Candidate)));
+        From->CandidateSet = (Candidate *) calloc(3, sizeof(Candidate));
     if (From == To || To->Subproblem != FirstNode->Subproblem ||
         !IsPossibleCandidate(From, To))
         return 0;
@@ -38,9 +39,9 @@ int AddCandidate(Node * From, Node * To, int Cost, int Alpha)
     NFrom->Cost = Cost;
     NFrom->Alpha = Alpha;
     NFrom->To = To;
-    assert(From->CandidateSet =
-           (Candidate *) realloc(From->CandidateSet,
-                                 (Count + 2) * sizeof(Candidate)));
+    From->CandidateSet =
+        (Candidate *) realloc(From->CandidateSet,
+                              (Count + 2) * sizeof(Candidate));
     From->CandidateSet[Count + 1].To = 0;
     return 1;
 }

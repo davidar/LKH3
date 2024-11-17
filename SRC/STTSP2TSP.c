@@ -22,10 +22,8 @@ void STTSP2TSP()
     do {
         if (N1->Required) {
             Dijkstra(N1);
-            assert(N1->PathLength =
-                   (int *) calloc(NewDimension + 1, sizeof(int)));
-            assert(N1->Path =
-                   (int **) calloc(NewDimension + 1, sizeof(int *)));
+            N1->PathLength = (int *) calloc(NewDimension + 1, sizeof(int));
+            N1->Path = (int **) calloc(NewDimension + 1, sizeof(int *));
             i = N1->Serial;
             N2 = FirstNode;
             do {
@@ -36,8 +34,8 @@ void STTSP2TSP()
                     while ((N = N->Dad) != N1)
                         N1->PathLength[j + 1]++;
                     if (N1->PathLength[j + 1] > 0) {
-                        assert(N1->Path[j + 1] = 
-                           (int *) malloc(N1->PathLength[j + 1] * sizeof(int)));
+                        N1->Path[j + 1] = 
+                           (int *) malloc(N1->PathLength[j + 1] * sizeof(int));
                         k = N1->PathLength[j + 1];
                         N = N2;
                         while ((N = N->Dad) != N1)

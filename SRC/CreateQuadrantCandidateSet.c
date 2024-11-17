@@ -40,26 +40,20 @@ void CreateQuadrantCandidateSet(int K)
 {
     Node *From, *To;
     Candidate *NFrom;
-    int L, Q, CandPerQ, Added, Count, i;
+    int L, Q, CandPerQ, Added, i;
 
     if (K <= 0)
         return;
     if (TraceLevel >= 2)
         printff("Creating quadrant candidate set ... ");
     KDTree = BuildKDTree(1);
-    assert(XMin =
-           (double *) malloc((1 + DimensionSaved) * sizeof(double)));
-    assert(XMax =
-           (double *) malloc((1 + DimensionSaved) * sizeof(double)));
-    assert(YMin =
-           (double *) malloc((1 + DimensionSaved) * sizeof(double)));
-    assert(YMax =
-           (double *) malloc((1 + DimensionSaved) * sizeof(double)));
+    XMin = (double *) malloc((1 + DimensionSaved) * sizeof(double));
+    XMax = (double *) malloc((1 + DimensionSaved) * sizeof(double));
+    YMin = (double *) malloc((1 + DimensionSaved) * sizeof(double));
+    YMax = (double *) malloc((1 + DimensionSaved) * sizeof(double));
     if (CoordType == THREED_COORDS) {
-        assert(ZMin =
-               (double *) malloc((1 + DimensionSaved) * sizeof(double)));
-        assert(ZMax =
-               (double *) malloc((1 + DimensionSaved) * sizeof(double)));
+        ZMin = (double *) malloc((1 + DimensionSaved) * sizeof(double));
+        ZMax = (double *) malloc((1 + DimensionSaved) * sizeof(double));
     }
     ComputeBounds(0, Dimension - 1);
     Contains = CoordType == THREED_COORDS ? Contains3D : Contains2D;
@@ -67,16 +61,11 @@ void CreateQuadrantCandidateSet(int K)
         CoordType == THREED_COORDS ? BoxOverlaps3D : BoxOverlaps2D;
     L = CoordType == THREED_COORDS ? 8 : 4;
     CandPerQ = K / L;
-    assert(CandidateSet =
-           (Candidate *) malloc((K + 1) * sizeof(Candidate)));
+    CandidateSet = (Candidate *) malloc((K + 1) * sizeof(Candidate));
 
     From = FirstNode;
     do {
-        Count = 0;
-        for (NFrom = From->CandidateSet; NFrom && NFrom->To; NFrom++)
-            if (FixedOrCommon(From, NFrom->To) && ++Count == 2)
-                break;
-        if (Count == 2)
+        if (FixedOrCommonCandidates(From) == 2)
             continue;
         Added = 0;
         for (Q = 1; Q <= L; Q++) {
@@ -110,9 +99,9 @@ void CreateQuadrantCandidateSet(int K)
         (WeightType == GEO || WeightType == GEOM ||
          WeightType == GEO_MEEUS || WeightType == GEOM_MEEUS)) {
         Candidate **SavedCandidateSet;
-        assert(SavedCandidateSet =
-               (Candidate **) malloc((1 + DimensionSaved) *
-                                     sizeof(Candidate *)));
+        SavedCandidateSet =
+           (Candidate **) malloc((1 + DimensionSaved) *
+                                 sizeof(Candidate *));
         if (TraceLevel >= 2)
             printff("done\n");
         From = FirstNode;
@@ -146,9 +135,11 @@ void CreateQuadrantCandidateSet(int K)
             do {
                 Candidate *QCandidateSet = From->CandidateSet;
                 From->CandidateSet = SavedCandidateSet[From->Id];
-                for (NFrom = QCandidateSet; (To = NFrom->To); NFrom++)
-                    AddCandidate(From, To, NFrom->Cost, NFrom->Alpha);
-                free(QCandidateSet);
+                if (QCandidateSet) {
+                    for (NFrom = QCandidateSet; (To = NFrom->To); NFrom++)
+                        AddCandidate(From, To, NFrom->Cost, NFrom->Alpha);
+                    free(QCandidateSet);
+                }
             } while ((From = From->Suc) != FirstNode);
             free(SavedCandidateSet);
         }
@@ -179,26 +170,19 @@ void CreateNearestNeighborCandidateSet(int K)
     if (TraceLevel >= 2)
         printff("Creating nearest neighbor candidate set ... ");
     KDTree = BuildKDTree(1);
-    assert(XMin =
-           (double *) malloc((1 + DimensionSaved) * sizeof(double)));
-    assert(XMax =
-           (double *) malloc((1 + DimensionSaved) * sizeof(double)));
-    assert(YMin =
-           (double *) malloc((1 + DimensionSaved) * sizeof(double)));
-    assert(YMax =
-           (double *) malloc((1 + DimensionSaved) * sizeof(double)));
+    XMin = (double *) malloc((1 + DimensionSaved) * sizeof(double));
+    XMax = (double *) malloc((1 + DimensionSaved) * sizeof(double));
+    YMin = (double *) malloc((1 + DimensionSaved) * sizeof(double));
+    YMax = (double *) malloc((1 + DimensionSaved) * sizeof(double));
     if (CoordType == THREED_COORDS) {
-        assert(ZMin =
-               (double *) malloc((1 + DimensionSaved) * sizeof(double)));
-        assert(ZMax =
-               (double *) malloc((1 + DimensionSaved) * sizeof(double)));
+        ZMin = (double *) malloc((1 + DimensionSaved) * sizeof(double));
+        ZMax = (double *) malloc((1 + DimensionSaved) * sizeof(double));
     }
     ComputeBounds(0, Dimension - 1);
     Contains = CoordType == THREED_COORDS ? Contains3D : Contains2D;
     BoxOverlaps =
         CoordType == THREED_COORDS ? BoxOverlaps3D : BoxOverlaps2D;
-    assert(CandidateSet =
-           (Candidate *) malloc((K + 1) * sizeof(Candidate)));
+    CandidateSet = (Candidate *) malloc((K + 1) * sizeof(Candidate));
 
     From = FirstNode;
     do {
@@ -221,9 +205,8 @@ void CreateNearestNeighborCandidateSet(int K)
     }
     if (Level == 0 && (WeightType == GEOM || WeightType == GEOM_MEEUS)) {
         Candidate **SavedCandidateSet;
-        assert(SavedCandidateSet =
-               (Candidate **) malloc((1 + DimensionSaved) *
-                                     sizeof(Candidate *)));
+        SavedCandidateSet =
+           (Candidate **) malloc((1 + DimensionSaved) * sizeof(Candidate *));
         if (TraceLevel >= 2)
             printff("done\n");
         /* Transform longitude (180 and -180 map to 0) */

@@ -24,7 +24,7 @@ Node **BuildKDTree(int Cutoff)
     Node *N;
 
     cutoff = Cutoff >= 1 ? Cutoff : 1;
-    assert(KDTree = (Node **) malloc(Dimension * sizeof(Node *)));
+    KDTree = (Node **) malloc(Dimension * sizeof(Node *));
     for (i = 0, N = FirstNode; i < Dimension; i++, N = N->Suc)
         KDTree[i] = N;
     BuildSubKDTree(0, Dimension - 1);

@@ -1,5 +1,5 @@
-#include "Segment.h"
 #include "LKH.h"
+#include "Segment.h"
 #include "Hashing.h"
 #include "Sequence.h"
 #include "BIT.h"
@@ -105,6 +105,12 @@ GainType LinKernighan()
     do {
         /* Choose t1 as the first "active" node */
         while ((t1 = RemoveFirstActive())) {
+            if (GetTime() - EntryTime >= TimeLimit ||
+                GetTime() - StartTime >= TotalTimeLimit) {
+                if (TraceLevel >= 1)
+                    printff("*** Time limit exceeded");
+                goto End_LinKernighan;
+            }
             /* t1 is now "passive" */
             SUCt1 = SUC(t1);
             if ((TraceLevel >= 3 || (TraceLevel == 2 && Trial == 1)) &&
@@ -122,8 +128,6 @@ GainType LinKernighan()
                        (KickType == 0 || Kicks == 0)))))
                     continue;
                 G0 = C(t1, t2);
-                OldSwaps = Swaps = 0;
-                PenaltyGain = Gain = 0;
                 /* Try to find a tour-improving chain of moves */
                 do
                     t2 = Swaps == 0 ? BestMove(t1, t2, &G0, &Gain) :
@@ -161,9 +165,7 @@ GainType LinKernighan()
             goto End_LinKernighan;
         HashInsert(HTable, Hash, Cost);
         /* Try to find improvements using non-sequential 4/5-opt moves */
-        CurrentPenalty = PLUS_INFINITY;
-        CurrentPenalty = Penalty ? Penalty() : 0;
-        PenaltyGain = 0;
+        PenaltyGain = Gain = 0;
         if (Gain23Used && ((Gain = Gain23()) > 0 || PenaltyGain > 0)) {
             /* An improvement has been found */
 #ifdef HAVE_LONG_LONG
@@ -179,7 +181,7 @@ GainType LinKernighan()
                 (TraceLevel == 2 &&
                  (CurrentPenalty < BetterPenalty ||
                   (CurrentPenalty == BetterPenalty && Cost < BetterCost))))
-                StatusReport(Cost, EntryTime, "+ ");
+                StatusReport(Cost, EntryTime, " + ");
             if (HashSearch(HTable, Hash, Cost))
                 goto End_LinKernighan;
         }
@@ -189,5 +191,6 @@ GainType LinKernighan()
     PredSucCostAvailable = 0;
     NormalizeNodeList();
     NormalizeSegmentList();
+    Reversed = 0;
     return Cost;
 }

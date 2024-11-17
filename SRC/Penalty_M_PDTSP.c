@@ -10,8 +10,8 @@ GainType Penalty_M_PDTSP()
     static int *ComLoad = 0, *Min = 0;
 
     if (!ComLoad) {
-        assert(ComLoad = (int *) malloc(DemandDimension * sizeof(int)));
-        assert(Min = (int *) malloc(DemandDimension * sizeof(int)));
+        ComLoad = (int *) malloc(DemandDimension * sizeof(int));
+        Min = (int *) malloc(DemandDimension * sizeof(int));
     }
     for (k = 0; k < DemandDimension; k++) {
         ComLoad[k] = 0;

@@ -93,10 +93,11 @@ GainType CVRP_InitialTour()
         } while ((N = Next) != FirstNode);
         N = FirstNode = Depot;
         Cost = 0;
-        do
-            Cost += C(N, N->Suc) - N->Pi - N->Suc->Pi;
-        while ((N = N->Suc) != FirstNode);
-        Cost /= Precision;
+        do {
+            Node *Na = N->DepotId ? Depot : N;
+            Node *Nb = N->Suc->DepotId ? Depot : N->Suc;
+            Cost += OldDistance(Na, Nb);
+        } while ((N = N->Suc) != FirstNode);
         Cost += ServiceTime * (Dim - 1);
         CurrentPenalty = PLUS_INFINITY;
         CurrentPenalty = Penalty();
@@ -115,7 +116,7 @@ GainType CVRP_InitialTour()
     Cost = BestCost;
     CurrentPenalty = BestPenalty;
     if (TraceLevel >= 1) {
-        if (Salesmen > 1 || ProblemType == SOP)
+        if (Salesmen > 1 || ProblemType == SOP || ProblemType == PCTSP)
             printff(GainFormat "_" GainFormat, CurrentPenalty, Cost);
         else
             printff(GainFormat, Cost);
@@ -135,8 +136,7 @@ void CreateS()
     int Dim = Dimension - Salesmen + 1, i, j;
     Node *Ni, *Nj;
     SSize = 0;
-    assert(S =
-           (Saving *) malloc((Dim - 2) * (Dim - 1) / 2 * sizeof(Saving)));
+    S = (Saving *) malloc((Dim - 2) * (Dim - 1) / 2 * sizeof(Saving));
     /* Compute savings */
     for (i = 1; i < Dim; i++) {
         Ni = &NodeSet[i];
@@ -168,18 +168,19 @@ static Node *Find(Node * v)
 static void Union(Node * x, Node * y)
 {
     Node *u = Find(x), *v = Find(y);
+    int d = x == y || x->DepotId || y->DepotId ? 0 :
+            OldDistance(x, y) -
+            OldDistance(x, Depot) - OldDistance(y, Depot);
     if (u->Size < v->Size) {
         u->Dad = v;
         v->Size += u->Size;
         v->Load += u->Load;
-        v->Cost += u->Cost + OldDistance(x, y) -
-            OldDistance(x, Depot) - OldDistance(y, Depot);
+        v->Cost += u->Cost + d;
     } else {
         v->Dad = u;
         u->Size += v->Size;
         u->Load += v->Load;
-        u->Cost += v->Cost + OldDistance(x, y) -
-            OldDistance(x, Depot) - OldDistance(y, Depot);
+        u->Cost += v->Cost + d;
     }
     if (x->Degree++ == 0)
         x->Prev = y;

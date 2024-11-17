@@ -1,8 +1,6 @@
 #include <stdio.h>
 #include <stdarg.h>
 
-void printff(const char *fmt, ...);
-
 /* 
  * The printff function prints a message and flushes stdout.
  */

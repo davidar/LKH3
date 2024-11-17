@@ -86,8 +86,6 @@ void CreateDelaunayCandidateSet()
     }
     if (Level == 0) {
         AddTourCandidates();
-        /* Add quadrant neighbors if any node has less than two candidates.
-           That is, if it should happen that delaunay_edges fails. */
         if (ExtraCandidates < 2) {
             /* Add quadrant neighbors if any node has less than two candidates.
                That is, if it should happen that delaunay_edges fails. */

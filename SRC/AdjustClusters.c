@@ -14,7 +14,7 @@ void AdjustClusters(int K, Node ** Center)
     Node *N;
     int *Size;
 
-    assert(Size = (int *) calloc((K + 1), sizeof(int)));
+    Size = (int *) calloc((K + 1), sizeof(int));
     N = FirstNode;
     do
         Size[N->Subproblem]++;

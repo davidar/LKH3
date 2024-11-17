@@ -13,7 +13,7 @@ void MTSP_WriteSolution(char *FileName, GainType Penalty, GainType Cost)
     FullFileName = FullName(FileName, Cost);
     if (TraceLevel >= 1)
         printff("Writing MTSP_SOLUTION_FILE: \"%s\" ... ", FullFileName);
-    assert(SolutionFile = fopen(FullFileName, "w"));
+    assert((SolutionFile = fopen(FullFileName, "w")));
     fprintf(SolutionFile, "%s, Cost: " GainFormat "_" GainFormat "\n",
             Name, Penalty, Cost);
     fprintf(SolutionFile, "The tours traveled by the %d salesmen are:\n",
@@ -21,10 +21,16 @@ void MTSP_WriteSolution(char *FileName, GainType Penalty, GainType Cost)
     N = Depot;
     Forward = N->Suc->Id != N->Id + DimensionSaved;
     do {
+        Node *First = 0, *Last = 0;
         Sum = 0;
         Size = -1;
         do {
             fprintf(SolutionFile, "%d ", N->Id <= Dim ? N->Id : Depot->Id);
+            if (ProblemType == GCTSP && !N->DepotId) {
+                if (!First)
+                    First = N;
+                Last = N;
+            }
             NextN = Forward ? N->Suc : N->Pred;
             Sum += C(N, NextN) - N->Pi - NextN->Pi;
             Size++;
@@ -32,8 +38,16 @@ void MTSP_WriteSolution(char *FileName, GainType Penalty, GainType Cost)
                 NextN = Forward ? NextN->Suc : NextN->Pred;
             N = NextN;
         } while (N->DepotId == 0);
-        fprintf(SolutionFile, "%d (#%d)  Cost: " GainFormat "\n",
-                Depot->Id, Size, Sum / Precision);
+        if (ProblemType == GCTSP && First != Last)
+            Sum += C(First, Last) - First->Pi - Last->Pi;
+        if (ProblemType == MSCTSP)
+            Sum *= -1;
+        if (N->DepotId <= ExternalSalesmen)
+            fprintf(SolutionFile, "(#%d)  Cost: " GainFormat "\n",
+                    Size, Sum / Precision);
+        else
+            fprintf(SolutionFile, "%d (#%d)  Cost: " GainFormat "\n",
+                    Depot->Id, Size, Sum / Precision);
     } while (N != Depot);
     fclose(SolutionFile);
     if (TraceLevel >= 1)

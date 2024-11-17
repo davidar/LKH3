@@ -87,15 +87,15 @@ static void KMeansClustering(int K)
     int Moving = 0;
     CostFunction OldDistance = Distance;
 
-    assert(Center = (Node *) calloc((K + 1), sizeof(Node)));
-    assert(CenterRef = (Node **) calloc((K + 1), sizeof(Node *)));
-    assert(SumXc = (double *) calloc(K + 1, sizeof(double)));
-    assert(SumYc = (double *) calloc(K + 1, sizeof(double)));
-    assert(SumZc = (double *) calloc(K + 1, sizeof(double)));
-    assert(Count = (int *) calloc(K + 1, sizeof(int)));
-    assert(Movement = (int *) calloc(K + 1, sizeof(int)));
-    assert(MMax = (int *) calloc(K + 1, sizeof(int)));
-    assert(Perm = (Node **) malloc(Dimension * sizeof(Node *)));
+    Center = (Node *) calloc((K + 1), sizeof(Node));
+    CenterRef = (Node **) calloc((K + 1), sizeof(Node *));
+    SumXc = (double *) calloc(K + 1, sizeof(double));
+    SumYc = (double *) calloc(K + 1, sizeof(double));
+    SumZc = (double *) calloc(K + 1, sizeof(double));
+    Count = (int *) calloc(K + 1, sizeof(int));
+    Movement = (int *) calloc(K + 1, sizeof(int));
+    MMax = (int *) calloc(K + 1, sizeof(int));
+    Perm = (Node **) malloc(Dimension * sizeof(Node *));
 
     /* Pick random initial centers */
     for (i = 0; i < Dimension; i++)

@@ -4,30 +4,30 @@ The code is distributed for research use. The author reserves all rights to
 the code.
 
 
-INSTRUCTIONS FOR INSTALLATION: (Version 3.0.6 - May 2019)
+INSTRUCTIONS FOR INSTALLATION: (Version 3.0.13 - November 2024)
 -----------------------------
 
 The software is available in gzipped tar format:
 
-	LKH-3.0.6.tgz	(approximately 2.3 MB)
+	LKH-3.0.13.tgz	(approximately 2.3 MB)
 
 Download the software and execute the following UNIX commands:
 
-  	tar xvfz LKH-3.0.6.tgz
-   	cd LKH-3.0.5
+  	tar xvfz LKH-3.0.13.tgz
+   	cd LKH-3.0.13
 	make
 
-An executable file called LKH will now be available in the directory LKH-3.0.6.
+An executable file called LKH will now be available in the directory LKH-3.0.13.
 
-To test the installation run the program by typing ./LKH pr2392.par. 
-Then press return. The program should now solve a TSP instance with 2392 nodes.
+To test the installation, run the program by typing ./LKH pr2392.par and 
+then press return. The program should now solve a TSP instance with 2392 nodes.
 
-For testing the installation on an mTSP problem, type ./LKH whizzkids96.par.
-Then press return.
+To test the installation on an mTSP problem, type ./LKH whizzkids96.par and
+then press return.
 
-A two-level tree is used as the default tour representation. 
-A three-level tree representation may be used instead by compiling the
-source code with the compiler option 
+The default tour representation uses a two-level tree. 
+To use a three-level tree representation instead, compile the source code 
+with the compiler option
 
 	-DTHREE_LEVEL_TREE
 
@@ -36,6 +36,61 @@ Just edit the first line in SRC/Makefile and execute the commands
 	make clean
 	make
 
+CHANGES IN VERSION 3.0.13:
+-------------------------
+
+Added code for solving
+the maximum scattered colored traveling salesman problem (MSCTSP),
+the precedence-constrained colored traveling salesman problem (PCTSP), and the constrained asymmetric traveling salesman path problem (CATSPP).
+
+CHANGES IN VERSION 3.0.12:
+-------------------------
+
+Added code for solving 
+the general colored traveling salesman problem (GCTSP) andi
+the capacitated colored traveling salesman problem (CCCTSP).
+
+CHANGES IN VERSION 3.0.11:
+-------------------------
+
+Added code for solving the clustered vehicle routing problem (CluVRP).
+
+CHANGES IN VERSION 3.0.10:
+-------------------------
+
+Added code for solving 
+the bounded multiple traveling salesman problem (BMTSP), 
+the colored balanced traveling salesman problem (CBTSP), 
+the colored bottleneck traveling salesman problem (CBnTSP),
+the homogeneous probability traveling salesman problem (PTSP), and
+the traveling salesman problem with d-relaxed priority rule (TSP-d).
+
+New keyword: PROBABILITY.
+
+CHANGES IN VERSION 3.0.9:
+-------------------------
+
+Added code for solving the k-traveling salesman problem (kTSP).
+New keyword: K.
+
+
+CHANGES IN VERSION 3.0.8:
+-------------------------
+
+Tours may now be recombined by Xavier Clarist's recombination (CLARIST).
+
+CLARIST recombination is used by giving the following specification in the parameter file
+
+RECOMBINATION = CLARIST
+
+
+CHANGES IN LKH-3.0.7:
+--------------------–
+
+Added code for solving the asymmetric distance-constrained vehicle
+routing problem (ADCVRP).
+
+
 CHANGES IN LKH-3.0.6:
 ---------------------
 
@@ -43,6 +98,7 @@ Added code for solving the Steiner traveling salesman problem (STTSP).
 New keyword
 
     REQUIRED_NODES_SECTION
+
 
 CHANGES IN LKH-3.0.5:
 ---------------------
@@ -64,6 +120,7 @@ The node coloring is described in a
 New initial tour algorithm: CTSP
 
 Added code solving the minimum latency problem (MLP).
+
 
 CHANGES IN VERSION 3.0.3:
 -------------------------
@@ -101,6 +158,7 @@ they will take their default values. These parameters are:
     initial tour for Lin-Kernighan.
     Default: NO.
 
+
 CHANGES IN VERSION 3.0.2:
 -------------------------
 
@@ -122,6 +180,7 @@ CHANGES IN VERSION 3.0.1:
 -------------------------
 
     New problem type: TSPDL (traveling salesman with draft limits)
+
 
 NEW IN VERSION 3.0:
 -------------------
@@ -173,14 +232,3 @@ The data part:
 	DEPOT_SECTION
 	PICKUP_AND_DELIVERY_SECTION
 	TIME_WINDOW_SECTION
-
-DOCKER INSTRUCTIONS:
---------------------
-
-To build the Docker image, run the following command in the root directory of the repository:
-
-    docker build -t lkh .
-
-To run the Docker container, use the following command:
-
-    docker run -v $(pwd):/app lkh pr2392.par

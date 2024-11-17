@@ -21,7 +21,7 @@ GainType TSPDL_InitialTour()
         printff("TSPDL = ");
     assert(Asymmetric);
     assert(Salesmen == 1);
-    assert(T = (Node **) malloc(DimensionSaved * sizeof(Node *)));
+    T = (Node **) malloc(DimensionSaved * sizeof(Node *));
     for (i = 0; i < DimensionSaved; i++)
         T[i] = &NodeSet[i + 1];
     for (i = 1; i < DimensionSaved; i++) {

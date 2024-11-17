@@ -173,7 +173,11 @@ GainType MergeWithTourGPX2()
     if (TraceLevel >= 2) {
         printff("GPX2: ");
         if (Penalty)
-            printff(GainFormat "_" GainFormat "\n", CurrentPenalty, Cost1);
+            printff(GainFormat "_" GainFormat "\n",
+                    (ProblemType == MSCTSP ? -1 : 1) *
+                    CurrentPenalty, 
+                    (ProblemType == MSCTSP ? -1 : 1) *
+                    Cost1);
         else
             printff(GainFormat "\n", Cost1);
     }

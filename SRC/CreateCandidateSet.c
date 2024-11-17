@@ -35,9 +35,11 @@ void CreateCandidateSet()
         (MaxTrials == 0 &&
          (FirstNode->InitialSuc || InitialTourAlgorithm == SIERPINSKI ||
           InitialTourAlgorithm == MOORE))) {
-        CandidatesRead = ReadCandidates(MaxCandidates) ||
+        CandidatesRead = ReadCandidates(MaxCandidates) |
             ReadEdges(MaxCandidates);
         AddTourCandidates();
+        if (CandidateSetSymmetric)
+            SymmetrizeCandidateSet();
         if (ProblemType == HCP || ProblemType == HPP)
             Ascent();
         goto End_CreateCandidateSet;
@@ -47,7 +49,7 @@ void CreateCandidateSet()
     if (MaxCandidates > 0 &&
         (CandidateSetType == QUADRANT || CandidateSetType == NN)) {
         ReadPenalties();
-        if (!(CandidatesRead = ReadCandidates(MaxCandidates) ||
+        if (!(CandidatesRead = ReadCandidates(MaxCandidates) |
               ReadEdges(MaxCandidates)) && MaxCandidates > 0) {
             if (CandidateSetType == QUADRANT)
                 CreateQuadrantCandidateSet(MaxCandidates);
@@ -72,14 +74,14 @@ void CreateCandidateSet()
         do
             Na->Pi = 0;
         while ((Na = Na->Suc) != FirstNode);
-        CandidatesRead = ReadCandidates(MaxCandidates) ||
+        CandidatesRead = ReadCandidates(MaxCandidates) |
             ReadEdges(MaxCandidates);
         Cost = Ascent();
         if (Subgradient && SubproblemSize == 0) {
             WritePenalties();
             PiFile = 0;
         }
-    } else if ((CandidatesRead = ReadCandidates(MaxCandidates) ||
+    } else if ((CandidatesRead = ReadCandidates(MaxCandidates) |
                 ReadEdges(MaxCandidates)) || MaxCandidates == 0) {
         AddTourCandidates();
         if (CandidateSetSymmetric)
@@ -120,9 +122,13 @@ void CreateCandidateSet()
     }
     LowerBound = (double) Cost / Precision;
     if (TraceLevel >= 1) {
-        printff("Lower bound = %0.1f", LowerBound);
-        if (Optimum != MINUS_INFINITY && Optimum != 0)
+        printff("Lower bound = %0.1f",
+                (ProblemType == MSCTSP ? -1 : 1) *
+                LowerBound);
+        if (Optimum != MINUS_INFINITY && Optimum != 0 &&
+            (!Penalty || !OptimizePenalty))
             printff(", Gap = %0.2f%%",
+                    (ProblemType == MSCTSP ? -1 : 1) *
                     100.0 * (Optimum - LowerBound) / Optimum);
         if (!PiFile)
             printff(", Ascent time = %0.2f sec.",
@@ -130,8 +136,12 @@ void CreateCandidateSet()
         printff("\n");
     }
     MaxAlpha = (GainType) fabs(Excess * Cost);
-    if ((A = Optimum * Precision - Cost) > 0 && A < MaxAlpha)
+    if (!OptimizePenalty &&
+        Optimum != MINUS_INFINITY && Optimum != 0 &&
+        (A = Optimum * Precision - Cost) > 0 && A < MaxAlpha)
         MaxAlpha = A;
+    if (MaxAlpha == 0)
+        MaxAlpha = INT_MAX;
     if (CandidateSetType == DELAUNAY ||
         CandidateSetType == POPMUSIC ||
         MaxCandidates == 0)

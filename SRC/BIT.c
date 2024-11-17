@@ -57,9 +57,9 @@ void BIT_Make(int Size)
         return;
     n = Size;
     for (p = 1; (1 << p) < n; p++);
-    assert(MinTree = (int *) calloc(1 << (p + 1), sizeof(int)));
-    assert(MaxTree = (int *) calloc(1 << (p + 1), sizeof(int)));
-    assert(L = (int *) malloc((n + 1) * sizeof(int)));
+    MinTree = (int *) calloc(1 << (p + 1), sizeof(int));
+    MaxTree = (int *) calloc(1 << (p + 1), sizeof(int));
+    L = (int *) malloc((n + 1) * sizeof(int));
 }
 
 static void Build()

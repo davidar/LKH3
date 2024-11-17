@@ -49,9 +49,11 @@ GainType FindTour()
         CurrentPenalty = BetterPenalty = Penalty ? Penalty() : 0;
     }
     for (Trial = 1; Trial <= MaxTrials; Trial++) {
-        if (GetTime() - EntryTime >= TimeLimit) {
+        if (GetTime() - EntryTime >= TimeLimit ||
+            GetTime() - StartTime >= TotalTimeLimit) {
             if (TraceLevel >= 1)
                 printff("*** Time limit exceeded ***\n");
+            Trial--;
             break;
         }
         /* Choose FirstNode at random */
@@ -62,22 +64,28 @@ GainType FindTour()
                 FirstNode = FirstNode->Suc;
         ChooseInitialTour();
         if ((ProblemType == SOP || ProblemType == M1_PDTSP) &&
-            InitialTourAlgorithm != SOP_ALG)
+            (InitialTourAlgorithm != SOP_ALG || Trial > 1))
             SOP_RepairTour();
+        if (ProblemType == PCTSP && InitialTourAlgorithm != PCTSP_ALG &&
+            (!FirstNode->InitialSuc || Trial > 1))
+            PCTSP_RepairTour();
         Cost = LinKernighan();
-        if (FirstNode->BestSuc && !TSPTW_Makespan) {
-            /* Merge tour with current best tour */
-            t = FirstNode;
-            while ((t = t->Next = t->BestSuc) != FirstNode);
-            Cost = MergeWithTour();
-        }
-        if (Dimension == DimensionSaved && Cost >= OrdinalTourCost &&
-            BetterCost > OrdinalTourCost && !TSPTW_Makespan) {
-            /* Merge tour with ordinal tour */
-            for (i = 1; i < Dimension; i++)
-                NodeSet[i].Next = &NodeSet[i + 1];
-            NodeSet[Dimension].Next = &NodeSet[1];
-            Cost = MergeWithTour();
+        if (GetTime() - EntryTime < TimeLimit &&
+            GetTime() - StartTime < TotalTimeLimit) {
+            if (FirstNode->BestSuc && !TSPTW_Makespan) {
+                /* Merge tour with current best tour */
+                t = FirstNode;
+                while ((t = t->Next = t->BestSuc) != FirstNode);
+                Cost = MergeWithTour();
+            }
+            if (Dimension == DimensionSaved && Cost >= OrdinalTourCost &&
+                BetterCost > OrdinalTourCost && !TSPTW_Makespan) {
+                /* Merge tour with ordinal tour */
+                for (i = 1; i < Dimension; i++)
+                    NodeSet[i].Next = &NodeSet[i + 1];
+                NodeSet[Dimension].Next = &NodeSet[1];
+                Cost = MergeWithTour();
+            }
         }
         if (CurrentPenalty < BetterPenalty ||
             (CurrentPenalty == BetterPenalty && Cost < BetterCost)) {
@@ -88,14 +96,12 @@ GainType FindTour()
             BetterCost = Cost;
             BetterPenalty = CurrentPenalty;
             RecordBetterTour();
-            if (BetterPenalty < BestPenalty ||
-                (BetterPenalty == BestPenalty && BetterCost < BestCost))
+            if ((BetterPenalty < BestPenalty ||
+                 (BetterPenalty == BestPenalty && BetterCost < BestCost)) &&
+                SubproblemSize == 0)
                 WriteTour(OutputTourFileName, BetterTour, BetterCost);
             if (StopAtOptimum) {
-                if (ProblemType != CCVRP && ProblemType != TRP &&
-                    ProblemType != MLP &&
-                    MTSPObjective != MINMAX &&
-                    MTSPObjective != MINMAX_SIZE ?
+                if (!Penalty || !OptimizePenalty ?
                     CurrentPenalty == 0 && Cost == Optimum :
                     CurrentPenalty == Optimum)
                     break;
@@ -132,7 +138,7 @@ GainType FindTour()
         } while ((t = t->Suc) != FirstNode);
     }
     t = FirstNode;
-    if (Norm == 0) {
+    if (Norm == 0 || MaxTrials == 0 || !t->BestSuc) {
         do
             t = t->BestSuc = t->Suc;
         while (t != FirstNode);

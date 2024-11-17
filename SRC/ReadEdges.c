@@ -22,7 +22,7 @@ int ReadEdges(int MaxCandidates)
     if (EdgeFiles == 0)
         return 0;
     Dimension = ProblemType != ATSP ? DimensionSaved : 2 * DimensionSaved;
-    assert(node_set = (node *) calloc(Dimension + 1, sizeof(node)));
+    node_set = (node *) calloc(Dimension + 1, sizeof(node));
     for (f = 0; f < EdgeFiles; f++) {
         if (!(EdgeFile = fopen(EdgeFileName[f], "r")))
             eprintf("Cannot open EDGE_FILE: \"%s\"", EdgeFileName[f]);
@@ -44,7 +44,7 @@ int ReadEdges(int MaxCandidates)
             assert(from >= 1 && from <= Dimension);
             to++;
             assert(to >= 1 && to <= Dimension);
-            assert(e = (edge *) malloc(sizeof(edge)));
+            e = (edge *) malloc(sizeof(edge));
             e->to = to;
             e->next = node_set[from].first_edge;
             e->cost = cost;

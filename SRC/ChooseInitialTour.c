@@ -11,10 +11,10 @@
  *
  * NextN is chosen as follows:
  *
- *  (A) If possible, choose NextN such that (N,NextN) is a fixed edge, or
- *      is common to two or more tours to be merged.
- *  (B) Otherwise, if possible, and Trial = 1, choose NextN such that
+ *  (A) If possible, and Trial = 1, choose NextN such that
  *      (N,NextN) is an edge of a given initial tour.
+ *  (B) Otherwise, if  possible, choose NextN such that (N,NextN) is a
+ *      fixed edge, or is common to two or more tours to be merged.
  *  (C) Otherwise, if possible, choose NextN so that (N,NextN) is a
  *      candidate edge, the alpha-value of (N,NextN) is zero, and (N,NextN)
  *      belongs to the current best or next best tour.
@@ -34,7 +34,7 @@ void ChooseInitialTour()
     Node *N, *NextN, *FirstAlternative, *Last;
     Candidate *NN;
     int Alternatives, Count, i;
-    
+
     if (KickType > 0 && Kicks > 0 && Trial > 1) {
         for (Last = FirstNode; (N = Last->BestSuc) != FirstNode; Last = N)
             Follow(N, Last);
@@ -46,10 +46,12 @@ void ChooseInitialTour()
         if (InitialTourAlgorithm == BORUVKA ||
             InitialTourAlgorithm == CTSP_ALG ||
             InitialTourAlgorithm == CVRP_ALG ||
+            InitialTourAlgorithm == GCTSP_ALG ||
             InitialTourAlgorithm == GREEDY ||
             InitialTourAlgorithm == MOORE ||
             InitialTourAlgorithm == MTSP_ALG ||
             InitialTourAlgorithm == NEAREST_NEIGHBOR ||
+            InitialTourAlgorithm == PCTSP_ALG ||
             InitialTourAlgorithm == QUICK_BORUVKA ||
             InitialTourAlgorithm == SIERPINSKI ||
             InitialTourAlgorithm == SOP_ALG ||
@@ -61,8 +63,12 @@ void ChooseInitialTour()
                 CTSP_InitialTour() :
                 InitialTourAlgorithm == CVRP_ALG ?
                 CVRP_InitialTour() :
+                InitialTourAlgorithm == GCTSP_ALG ?
+                GCTSP_InitialTour() :
                 InitialTourAlgorithm == MTSP_ALG ?
                 MTSP_InitialTour() :
+                InitialTourAlgorithm == PCTSP_ALG ?
+                PCTSP_InitialTour() :
                 InitialTourAlgorithm == SOP_ALG ?
                 SOP_InitialTour() :
                 InitialTourAlgorithm == TSPDL_ALG ?
@@ -75,25 +81,23 @@ void ChooseInitialTour()
                 return;
         }
     }
-    
-Start:
+
+  Start:
     /* Mark all nodes as "not chosen" by setting their V field to zero */
     N = FirstNode;
     do
         N->V = 0;
     while ((N = N->Suc) != FirstNode);
     Count = 0;
-    
+
     /* Choose FirstNode without two incident fixed or common candidate edges */
     do {
         if (FixedOrCommonCandidates(N) < 2)
             break;
     }
     while ((N = N->Suc) != FirstNode);
-    if (ProblemType == ATSP && N->Id <= DimensionSaved)
-        N += DimensionSaved;
     FirstNode = N;
-    
+
     /* Move nodes with two incident fixed or common candidate edges in
        front of FirstNode */
     for (Last = FirstNode->Pred; N != Last; N = NextN) {
@@ -101,39 +105,41 @@ Start:
         if (FixedOrCommonCandidates(N) == 2)
             Follow(N, Last);
     }
-    
+
     /* Mark FirstNode as chosen */
     FirstNode->V = 1;
     N = FirstNode;
-    
+
     /* Loop as long as not all nodes have been chosen */
     while (N->Suc != FirstNode) {
         FirstAlternative = 0;
         Alternatives = 0;
         Count++;
-        
+
         /* Case A */
-        for (NN = N->CandidateSet; NN && (NextN = NN->To); NN++) {
-            if (!NextN->V && Fixed(N, NextN)) {
-                Alternatives++;
-                NextN->Next = FirstAlternative;
-                FirstAlternative = NextN;
-            }
-        }
-        if (Alternatives == 0 && MergeTourFiles > 1) {
+        if (FirstNode->InitialSuc && Trial == 1 &&
+            Count <= InitialTourFraction * Dimension) {
             for (NN = N->CandidateSet; NN && (NextN = NN->To); NN++) {
-                if (!NextN->V && IsCommonEdge(N, NextN)) {
+                if (!NextN->V && NextN == N->InitialSuc) {
                     Alternatives++;
                     NextN->Next = FirstAlternative;
                     FirstAlternative = NextN;
                 }
             }
         }
-        if (Alternatives == 0 && FirstNode->InitialSuc && Trial == 1 &&
-            Count <= InitialTourFraction * Dimension) {
-            /* Case B */
+        /* Case B */
+        if (Alternatives == 0) {
             for (NN = N->CandidateSet; NN && (NextN = NN->To); NN++) {
-                if (!NextN->V && InInitialTour(N, NextN)) {
+                if (!NextN->V && Fixed(N, NextN)) {
+                    Alternatives++;
+                    NextN->Next = FirstAlternative;
+                    FirstAlternative = NextN;
+                }
+            }
+        }
+        if (Alternatives == 0 && MergeTourFiles > 1) {
+            for (NN = N->CandidateSet; NN && (NextN = NN->To); NN++) {
+                if (!NextN->V && IsCommonEdge(N, NextN)) {
                     Alternatives++;
                     NextN->Next = FirstAlternative;
                     FirstAlternative = NextN;
@@ -190,6 +196,10 @@ Start:
     if (Forbidden(N, N->Suc)) {
         FirstNode = N;
         goto Start;
+    }
+    if (Dimension == 2 * DimensionSaved) {
+        for (i = 1; i <= DimensionSaved; i++)
+            Precede(&NodeSet[i + DimensionSaved], &NodeSet[i]);
     }
     if (MaxTrials == 0) {
         GainType Cost = 0;

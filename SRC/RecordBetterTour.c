@@ -15,31 +15,35 @@
 
 void RecordBetterTour()
 {
-    Node *N = Asymmetric ? Depot : FirstNode;
-    Node *Stop = N;
+    Node *N = FirstNode, *Stop = N;
 
     if (!Asymmetric) {
         int i = 1;
         do
             BetterTour[i++] = N->Id;
         while ((N = N->Suc) != Stop);
-    } else if (N->Suc->Id != DimensionSaved + N->Id) {
-        int i = 1;
-        do
-            if (N->Id <= DimensionSaved)
-                BetterTour[i++] = N->Id;
-        while ((N = N->Suc) != Stop);
     } else {
-        int i = DimensionSaved;
-        do
-            if (N->Id <= DimensionSaved)
-                BetterTour[i--] = N->Id;
-        while ((N = N->Suc) != Stop);
+        if (Stop->Id > DimensionSaved)
+            Stop = N = Stop->Suc;
+        if (N->Suc->Id != DimensionSaved + N->Id) {
+            int i = 1;
+            do
+                if (N->Id <= DimensionSaved)
+                    BetterTour[i++] = N->Id;
+            while ((N = N->Suc) != Stop);
+        } else {
+            int i = DimensionSaved;
+            do
+                if (N->Id <= DimensionSaved)
+                    BetterTour[i--] = N->Id;
+            while ((N = N->Suc) != Stop);
+        }
     }
     BetterTour[0] = BetterTour[DimensionSaved];
+    N = FirstNode;
     do {
         N->NextBestSuc = N->BestSuc;
         N->BestSuc = N->Suc;
     }
-    while ((N = N->Suc) != Stop);
+    while ((N = N->Suc) != FirstNode);
 }

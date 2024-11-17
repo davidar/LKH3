@@ -4,9 +4,9 @@
 #include "BIT.h"
 
 /*
- * The BestSepcialOptMove function makes sequential as well as non-sequential
+ * The BestSpecialOptMove function makes sequential as well as non-sequential
  * edge exchanges. If possible, it makes a sequential 2-, 3- or 5-opt move,
- * or a non-sequential 4- or 6-pt move, that improves the tour.
+ * or a non-sequential 4- or 6-opt move, that improves the tour.
  * Otherwise, it finds the best feasible 5-opt move.
  *
  * If K < 5, then only sequential 2- or 3-opt moves, and non-sequential
@@ -47,16 +47,16 @@ Node *BestSpecialOptMove(Node * t1, Node * t2, GainType * G0,
         if (++Breadth2 > MaxBreadth)
             break;
         /* Choose t4 as one of t3's two neighbors on the tour */
-        for (X4 = 1; X4 <= 2; X4++) {
+        for (X4 = !Asymmetric ? 1 : 2; X4 <= 2; X4++) {
             t4 = X4 == 1 ? PRED(t3) : SUC(t3);
             if (FixedOrCommon(t3, t4))
                 continue;
             G2 = G1 + C(t3, t4);
             if (X4 == 1 && !Forbidden(t4, t1) &&
-                (CurrentPenalty > 0 ||
+                (PenaltyAware ||
                  TSPTW_Makespan || !c || G2 - c(t4, t1) > 0)) {
                 *Gain = G2 - C(t4, t1);
-                if (CurrentPenalty > 0 || TSPTW_Makespan || *Gain > 0) {
+                if (PenaltyAware || TSPTW_Makespan || *Gain > 0) {
                     Swap1(t1, t2, t3);
                     if (Improvement(Gain, t1, t2))
                         return 0;
@@ -91,10 +91,10 @@ Node *BestSpecialOptMove(Node * t1, Node * t2, GainType * G0,
                         continue;
                     G4 = G3 + C(t5, t6);
                     if (!Forbidden(t6, t1) &&
-                        (CurrentPenalty > 0 ||
+                        (PenaltyAware ||
                          TSPTW_Makespan || !c || G4 - c(t6, t1) > 0)) {
                         *Gain = G4 - C(t6, t1);
-                        if (CurrentPenalty > 0 ||
+                        if (PenaltyAware ||
                             TSPTW_Makespan || *Gain > 0) {
                             NewPenalty =
                                 BIT_LoadDiff3Opt(t1, t2, t3, t4, t5, t6) -
@@ -150,6 +150,59 @@ Node *BestSpecialOptMove(Node * t1, Node * t2, GainType * G0,
                                 Reversed ^= 1;
                         }
                     }
+                    if (t6 != t1 && !Forbidden(t6, t1) &&
+                        3 + 1 < NonsequentialMoveType &&
+                        PatchingC >= 2 && PatchingA >= 1 &&
+                        (Swaps == 0 || SubsequentPatching)) {
+                        G5 = G4 - C(t6, t1);
+                        if ((PatchingCRestricted ? G5 > 0 &&
+                            IsCandidate(t6, t1) :
+                            PatchingCExtended ? G5 > 0 || IsCandidate(t6, t1) :
+                            G5 > 0)) {
+                            incl[incl[2] = 3] = 2;
+                            incl[incl[4] = 5] = 4;
+                            incl[incl[1] = 6] = 1;
+                            t[1] = t1; t[2] = t2;
+                            t[3] = t3; t[4] = t4;
+                            t[5] = t5; t[6] = t6;
+                            MarkDeleted(t1, t2);
+                            MarkAdded(t2, t3);
+                            MarkDeleted(t3, t4);
+                            MarkAdded(t4, t5);
+                            MarkDeleted(t5, t6);
+                            *Gain = PatchCycles(3, G5);
+                            UnmarkDeleted(t1, t2);
+                            UnmarkAdded(t2, t3);
+                            UnmarkDeleted(t3, t4);
+                            UnmarkAdded(t4, t5);
+                            UnmarkDeleted(t5, t6);
+                            if (PenaltyGain > 0 || *Gain > 0)
+                                return 0;
+                        }
+                    }
+                }
+            }
+            if (t4 != t1 && !Forbidden(t4, t1) &&
+                2 + 1 < NonsequentialMoveType &&
+                PatchingC >= 2 && PatchingA >= 1 &&
+                (Swaps == 0 || SubsequentPatching)) {
+                G3 = G2 - C(t4, t1);
+                if ((PatchingCRestricted ? G3 > 0 && IsCandidate(t4, t1) :
+                    PatchingCExtended ? G3 > 0
+                    || IsCandidate(t4, t1) : G3 > 0)) {
+                    incl[incl[2] = 3] = 2;
+                    incl[incl[4] = 1] = 4;
+                    t[1] = t1; t[2] = t2;
+                    t[3] = t3; t[4] = t4;
+                    MarkDeleted(t1, t2);
+                    MarkAdded(t2, t3);
+                    MarkDeleted(t3, t4);
+                    *Gain = PatchCycles(2, G3);
+                    UnmarkDeleted(t1, t2);
+                    UnmarkAdded(t2, t3);
+                    UnmarkDeleted(t3, t4);
+                    if (PenaltyGain > 0 || *Gain > 0)
+                        return 0;
                 }
             }
             if (X4 == 1)
@@ -169,10 +222,10 @@ Node *BestSpecialOptMove(Node * t1, Node * t2, GainType * G0,
                 if (!Forbidden(t4, t5) && !Forbidden(t6, t1)) {
                     G3 = G2 - C(t4, t5);
                     G4 = G3 + C(t5, t6);
-                    if (CurrentPenalty > 0 ||
+                    if (PenaltyAware ||
                         TSPTW_Makespan || !c || G4 - c(t6, t1) > 0) {
                         *Gain = G4 - C(t6, t1);
-                        if (CurrentPenalty > 0 ||
+                        if (PenaltyAware ||
                             TSPTW_Makespan || *Gain > 0) {
                             NewPenalty =
                                 BIT_LoadDiff3Opt(t1, t2, t3, t4, t5, t6) -
@@ -190,39 +243,28 @@ Node *BestSpecialOptMove(Node * t1, Node * t2, GainType * G0,
                 if (!Asymmetric &&
                     !Forbidden(t4, t6) && !Forbidden(t5, t1)) {
                     G4 = G2 - C(t4, t6) + C(t5, t6);
-                    if (CurrentPenalty > 0 ||
+                    if (PenaltyAware ||
                         TSPTW_Makespan || !c || G4 - c(t5, t1) > 0) {
                         *Gain = G4 - C(t5, t1);
-                        if (CurrentPenalty > 0 ||
+                        if (PenaltyAware ||
                             TSPTW_Makespan || *Gain > 0) {
-                            Make3OptMove(t1, t2, t3, t4, t6, t5, 6);
-                            if (Improvement(Gain, t1, t2))
-                                return 0;
-                        }
-                    }
-                }
-            }
-            /* Try special 4-opt */
-            if (!Forbidden(t4, t1)) {
-                G3 = G2 - C(t4, t1);
-                if (!Asymmetric) {
-                    SelectBackward(&t6, &t5, t3, t2);
-                    if (t6 != t2 && !FixedOrCommon(t5, t6)) {
-                        SelectForward(&t8, &t7, t4, t1);
-                        if (t8 != t1 &&
-                            !Forbidden(t6, t7) &&
-                            !Forbidden(t8, t5) && !FixedOrCommon(t7, t8)) {
-                            *Gain = G3 + C(t5, t6) - C(t6, t7) +
-                                C(t7, t8) - C(t8, t5);
-                            if (CurrentPenalty > 0 ||
-                                TSPTW_Makespan || *Gain > 0) {
-                                Swap2(t5, t6, t7, t1, t2, t3);
+                            NewPenalty =
+                                BIT_LoadDiff3Opt(t1, t2, t3, t4, t5, t6) -
+                                Capacity;
+                            if (NewPenalty < CurrentPenalty ||
+                                (NewPenalty == CurrentPenalty &&
+                                 *Gain > 0)) {
+                                Make3OptMove(t1, t2, t3, t4, t6, t5, 6);
                                 if (Improvement(Gain, t1, t2))
                                     return 0;
                             }
                         }
                     }
                 }
+            }
+            /* Try special 4-opt */
+            if (t4 != t1 && !Forbidden(t4, t1)) {
+                G3 = G2 - C(t4, t1);
                 for (Case56 = 1; Case56 <= 2; Case56++) {
                     if (Case56 == 1) {
                         SelectBackward(&t6, &t5, t3, t2);
@@ -247,11 +289,11 @@ Node *BestSpecialOptMove(Node * t1, Node * t2, GainType * G0,
                         }
                         G4 = G3 + C(t5, t6) + C(t7, t8);
                         if (!Forbidden(t6, t7) && !Forbidden(t8, t5)) {
-                            if (CurrentPenalty > 0 ||
+                            if (PenaltyAware ||
                                 TSPTW_Makespan ||
                                 !c || G4 - c(t6, t7) - c(t8, t5) > 0) {
                                 *Gain = G4 - C(t6, t7) - C(t8, t5);
-                                if (CurrentPenalty > 0 ||
+                                if (PenaltyAware ||
                                     TSPTW_Makespan || *Gain > 0) {
                                     NewPenalty =
                                         BIT_LoadDiff4Opt(t1, t2, t3, t4,
@@ -270,15 +312,23 @@ Node *BestSpecialOptMove(Node * t1, Node * t2, GainType * G0,
                         }
                         if (!Asymmetric &&
                             !Forbidden(t5, t7) && !Forbidden(t6, t8)) {
-                            if (CurrentPenalty > 0 ||
+                            if (PenaltyAware ||
                                 TSPTW_Makespan ||
                                 !c || G4 - c(t5, t7) - c(t6, t8) > 0) {
                                 *Gain = G4 - C(t5, t7) - C(t6, t8);
-                                if (CurrentPenalty > 0 ||
+                                if (PenaltyAware ||
                                     TSPTW_Makespan || *Gain > 0) {
-                                    Swap2(t5, t6, t8, t1, t2, t3);
-                                    if (Improvement(Gain, t1, t2))
-                                        return 0;
+                                    NewPenalty =
+                                        BIT_LoadDiff4Opt(t1, t2, t3, t4,
+                                                         t5, t6, t7, t8) -
+                                        Capacity;
+                                    if (NewPenalty < CurrentPenalty ||
+                                        (NewPenalty == CurrentPenalty &&
+                                         *Gain > 0)) {
+                                        Swap2(t5, t6, t8, t1, t2, t3);
+                                        if (Improvement(Gain, t1, t2))
+                                            return 0;
+                                    }
                                 }
                             }
                         }
@@ -514,7 +564,7 @@ Node *BestSpecialOptMove(Node * t1, Node * t2, GainType * G0,
                 G7 = G6 - C(t8, t9);
                 G8 = G7 + C(t9, t10);
                 *Gain = G8 - C(t10, t1);
-                if (CurrentPenalty > 0 || TSPTW_Makespan || *Gain > 0) {
+                if (PenaltyAware || TSPTW_Makespan || *Gain > 0) {
                     NewPenalty =
                         BIT_LoadDiff5Opt(t1, t2, t3, t4, t5, t6,
                                          t7, t8, t9, t10, Case10) -
@@ -569,6 +619,7 @@ Node *BestSpecialOptMove(Node * t1, Node * t2, GainType * G0,
                     while ((t = BestSubsequentMove(t1, t, &G, Gain)));
                     if (*Gain > 0)
                         return 0;
+                    OldSwaps = 0;
                     RestoreTour();
                     if (t2 != SUC(t1))
                         Reversed ^= 1;
@@ -639,13 +690,13 @@ Node *BestSpecialOptMove(Node * t1, Node * t2, GainType * G0,
                     FixedOrCommon(t9, t10) || FixedOrCommon(t11, t12))
                     continue;
                 G4 = G2 + C(t5, t6) + C(t7, t8) + C(t9, t10) + C(t11, t12);
-                if (CurrentPenalty > 0 ||
+                if (PenaltyAware ||
                     TSPTW_Makespan ||
                     !c || G4 - c(t4, t5) - c(t6, t1) - c(t8, t9)
                     - c(t10, t11) - c(t12, t7) > 0) {
                     *Gain = G4 - C(t4, t5) - C(t6, t1) - C(t8, t9)
                         - C(t10, t11) - C(t12, t7);
-                    if (CurrentPenalty > 0 || TSPTW_Makespan || *Gain > 0) {
+                    if (PenaltyAware || TSPTW_Makespan || *Gain > 0) {
                         NewPenalty =
                             BIT_LoadDiff6Opt(t1, t2, t3, t4, t5, t6,
                                              t7, t8, t9, t10, t11, t12) -

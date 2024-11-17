@@ -8,11 +8,11 @@
  * the most promising 5-opt move that fulfils the positive gain criterion.
  * To prevent an infinity chain of moves the last edge in a 5-opt move must
  * not previously have been included in the chain.
-
+ *
  * The edge (t1,t2) is the first edge to be exchanged. G0 is a pointer to the
  * accumulated gain.
-
- * In case a r-opt move is found that improves the tour, the improvement of
+ *
+ * In case an r-opt move is found that improves the tour, the improvement of
  * the cost is made available to the caller through the parameter Gain.
  * If *Gain > 0, an improvement of the current tour has been found. In this
  * case the function returns 0.
@@ -76,10 +76,10 @@ Node *Best5OptMove(Node * t1, Node * t2, GainType * G0, GainType * Gain)
                 continue;
             G2 = G1 + C(t3, t4);
             if (X4 == 1 && !Forbidden(t4, t1) &&
-                (CurrentPenalty > 0 ||
+                (PenaltyAware ||
                  TSPTW_Makespan || !c || G2 - c(t4, t1) > 0)) {
                 *Gain = G2 - C(t4, t1);
-                if (CurrentPenalty > 0 || TSPTW_Makespan || *Gain > 0) {
+                if (PenaltyAware || TSPTW_Makespan || *Gain > 0) {
                     Make2OptMove(t1, t2, t3, t4);
                     if (Improvement(Gain, t1, t2))
                         return 0;
@@ -126,10 +126,10 @@ Node *Best5OptMove(Node * t1, Node * t2, GainType * G0, GainType * Gain)
                     G4 = G3 + C(t5, t6);
                     if ((Case6 <= 2 || Case6 == 5 || Case6 == 6) &&
                         !Forbidden(t6, t1) &&
-                        (CurrentPenalty > 0 ||
+                        (PenaltyAware ||
                          TSPTW_Makespan || !c || G4 - c(t6, t1) > 0)) {
                         *Gain = G4 - C(t6, t1);
-                        if (CurrentPenalty > 0 ||
+                        if (PenaltyAware ||
                             TSPTW_Makespan || *Gain > 0) {
                             Make3OptMove(t1, t2, t3, t4, t5, t6, Case6);
                             if (Improvement(Gain, t1, t2))
@@ -139,8 +139,7 @@ Node *Best5OptMove(Node * t1, Node * t2, GainType * G0, GainType * Gain)
                     if (Backtracking && !Excludable(t5, t6))
                         continue;
                     Breadth6 = 0;
-                    /* Choose (t6,t7) as a candidate edge emanating from
-                       t6 */
+                    /* Choose (t6,t7) as a candidate edge emanating from t6 */
                     for (Nt6 = t6->CandidateSet; (t7 = Nt6->To); Nt6++) {
                         if (t7 == t6->Pred || t7 == t6->Suc ||
                             (t6 == t2 && t7 == t3) ||
@@ -151,8 +150,7 @@ Node *Best5OptMove(Node * t1, Node * t2, GainType * G0, GainType * Gain)
                             continue;
                         if (++Breadth6 > MaxBreadth)
                             break;
-                        /* Choose t8 as one of t7's two neighbors on the
-                           tour */
+                        /* Choose t8 as one of t7's two neighbors on the tour */
                         for (X8 = 1; X8 <= 2; X8++) {
                             if (X8 == 1) {
                                 Case8 = Case6;
@@ -234,11 +232,11 @@ Node *Best5OptMove(Node * t1, Node * t2, GainType * G0, GainType * Gain)
                                  Case6 == 4 ? !BTW671 :
                                  Case6 == 7 ? BTW273 :
                                  Case6 != 8 && X8 == 1) &&
-                                (CurrentPenalty > 0 ||
+                                (PenaltyAware ||
                                  TSPTW_Makespan ||
                                  !c || G6 - c(t8, t1) > 0)) {
                                 *Gain = G6 - C(t8, t1);
-                                if (CurrentPenalty > 0 ||
+                                if (PenaltyAware ||
                                     TSPTW_Makespan || *Gain > 0) {
                                     Make4OptMove(t1, t2, t3, t4, t5,
                                                  t6, t7, t8, Case8);
@@ -511,11 +509,11 @@ Node *Best5OptMove(Node * t1, Node * t2, GainType * G0, GainType * Gain)
                                         continue;
                                     G8 = G7 + C(t9, t10);
                                     if (!Forbidden(t10, t1) &&
-                                        (CurrentPenalty > 0
+                                        (PenaltyAware
                                          || TSPTW_Makespan ||
                                          !c || G8 - c(t10, t1) > 0)) {
                                         *Gain = G8 - C(t10, t1);
-                                        if (CurrentPenalty > 0 ||
+                                        if (PenaltyAware ||
                                             TSPTW_Makespan || *Gain > 0) {
                                             Make5OptMove(t1, t2, t3, t4,
                                                          t5, t6, t7, t8,

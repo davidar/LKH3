@@ -22,10 +22,9 @@ void TrimCandidateSet(int MaxCandidates)
         for (NFrom = From->CandidateSet; NFrom && NFrom->To; NFrom++)
             Count++;
         if (Count > MaxCand) {
-            assert(From->CandidateSet =
-                   (Candidate *) realloc(From->CandidateSet,
-                                         (MaxCand +
-                                          1) * sizeof(Candidate)));
+            From->CandidateSet =
+                (Candidate *) realloc(From->CandidateSet,
+                                      (MaxCand + 1) * sizeof(Candidate));
             From->CandidateSet[MaxCand].To = 0;
         }
     } while ((From = From->Suc) != FirstNode);

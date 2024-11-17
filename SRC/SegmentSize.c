@@ -4,7 +4,7 @@
 /*
  * The SegmentSize function returns the number of nodes in the 
  * tour segment between two given nodes in the current direction. 
- * Note, however, that if the two-level or three-level list is used,
+ * Note, however, that if the two-level or three-level tree is used,
  * the number of nodes is only approximate (for efficiency reasons).
  * 
  * Time complexity: O(1).
@@ -112,11 +112,6 @@ int SegmentSize(Node * ta, Node * tb)
             (!Reversed ? PPa->Suc : PPa->Pred)->Size
             : (nMid - 1) * SGroupSize;
         nMid *= GroupSize;
-        nRight =
-            Reversed == (Pb->Reversed != PPb->Reversed) ?
-            tb->Rank - Pb->First->Rank : Pb->Last->Rank - tb->Rank;
-        if (nRight < 0)
-            nRight += Pb->Size;
         nRight =
             Reversed == PPb->Reversed ? Pb->Rank -
             PPb->First->Rank : PPb->Last->Rank - Pb->Rank;

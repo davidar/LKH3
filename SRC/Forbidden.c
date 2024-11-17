@@ -19,7 +19,7 @@ int Forbidden(Node * Na, Node * Nb)
     if (Asymmetric &&
         (Na->Id <= DimensionSaved) == (Nb->Id <= DimensionSaved))
         return 1;
-    if (ProblemType == SOP &&
+    if ((ProblemType == SOP || ProblemType == PCTSP) &&
         ((Na->Id == 1 && Nb->Id == Dimension + 1) ||
          (Na->Id == Dimension + 1 && Nb->Id == 1)))
         return 1;
@@ -28,7 +28,7 @@ int Forbidden(Node * Na, Node * Nb)
          (Na->Head != Na && Na->Tail != Na) ||
          (Nb->Head != Nb && Nb->Tail != Nb)))
         return 1;
-    if (Salesmen > 1 && Dimension == DimensionSaved) {
+    if (Salesmen > 1 && Dimension == DimensionSaved && MergeTourFiles <= 1) {
         if (Na->DepotId) {
             if ((Nb->DepotId && MTSPMinSize >= 1) ||
                 (Nb->Special &&
@@ -43,6 +43,21 @@ int Forbidden(Node * Na, Node * Nb)
                  Na->Special != Nb->DepotId % Salesmen + 1))
                 return 1;
         }
+    }
+    if ((ProblemType == CTSP || ProblemType == CBTSP || ProblemType == CBnTSP ||
+         (ProblemType == MSCTSP && !Na->ColorAllowed)) &&
+        Na->Color && Nb->Color && Na->Color != Nb->Color)
+        return 1;
+    if ((ProblemType == GCTSP || ProblemType == CCCTSP ||
+         ((ProblemType == MSCTSP || ProblemType == PCTSP)  &&
+          Na->ColorAllowed && Nb->ColorAllowed)) &&
+        !Na->DepotId && !Nb->DepotId) {
+        int i;
+        for (i = 1; i <= Salesmen; i++)
+            if (Na->ColorAllowed[i] && Nb->ColorAllowed[i])
+                break;
+        if (i > Salesmen)
+            return 1;
     }
     if (Salesmen > 1)
         return 0;

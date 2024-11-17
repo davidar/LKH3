@@ -73,7 +73,7 @@ static void KCenterClustering(int K)
     Node **Center, *N;
     int d, dMax, i;
 
-    assert(Center = (Node **) calloc((K + 1), sizeof(Node *)));
+    Center = (Node **) calloc((K + 1), sizeof(Node *));
 
     /* Pick first cluster arbitrarily */
     Center[1] = &NodeSet[Random() % Dimension + 1];

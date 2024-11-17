@@ -25,7 +25,7 @@ GainType SOP_RepairTour()
             N->Rank = Forward ? ++i : --i;
         }
     } while ((N = N->Suc) != First);
-    assert(Fringe = (Node **) malloc(DimensionSaved * sizeof(Node *)));
+    Fringe = (Node **) malloc(DimensionSaved * sizeof(Node *));
     First->Prev = First->Next = First;
     FringeNodes = 0;
     do {

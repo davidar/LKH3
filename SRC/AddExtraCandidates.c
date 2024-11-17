@@ -17,21 +17,23 @@ void AddExtraCandidates(int K, int CandidateSetType, int Symmetric)
     Candidate *Nt, *ExtraCandidateSet, **SavedCandidateSet;
     Node *t;
 
-    assert(SavedCandidateSet =
-           (Candidate **) malloc((1 + DimensionSaved) *
-                                 sizeof(Candidate *)));
+    SavedCandidateSet = (Candidate **) malloc((1 + DimensionSaved) *
+                                              sizeof(Candidate *));
     t = FirstNode;
     do {
         SavedCandidateSet[t->Id] = t->CandidateSet;
         t->CandidateSet = 0;
     } while ((t = t->Suc) != FirstNode);
+    AddTourCandidates();
     if (CandidateSetType == NN) {
         if ((CoordType == TWOD_COORDS && Distance != Distance_TOR_2D) ||
             (CoordType == THREED_COORDS && Distance != Distance_TOR_3D))
             CreateNearestNeighborCandidateSet(K);
         else
             CreateNNCandidateSet(K);
-    } else if (CandidateSetType == QUADRANT)
+    } else if (CandidateSetType == POPMUSIC)
+        Create_POPMUSIC_CandidateSet(K);
+    else if (CandidateSetType == QUADRANT)
         CreateQuadrantCandidateSet(K);
     t = FirstNode;
     do {

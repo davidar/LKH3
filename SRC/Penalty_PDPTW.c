@@ -18,6 +18,8 @@ GainType Penalty_PDPTW()
         CurrentRoute = N;
         Serial++;
         CostSum = DemandSum = 0;
+        if (N->Earliest > 0)
+            CostSum = N->Earliest;
         Pickups = Deliveries = 0;
         do {
             if (N->Id <= Dim && N != Depot) {

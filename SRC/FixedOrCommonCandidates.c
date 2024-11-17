@@ -8,12 +8,17 @@
 int FixedOrCommonCandidates(Node * N)
 {
     int Count = 0;
-
+    if (IsChild)
+        return 0;
     Count = N->FixedTo2 ? 2 : N->FixedTo1 ? 1 : 0;
     if (MergeTourFiles >= 2) {
-        if (!Fixed(N, N->MergeSuc[0]) && IsCommonEdge(N, N->MergeSuc[0]))
+        if (!Fixed(N, N->MergeSuc[0]) &&
+            N->Subproblem == N->MergeSuc[0]->Subproblem &&
+            IsCommonEdge(N, N->MergeSuc[0]))
             Count++;
-        if (!Fixed(N->MergePred, N) && IsCommonEdge(N->MergePred, N))
+        if (!Fixed(N->MergePred, N) &&
+            N->Subproblem == N->MergePred->Subproblem &&
+            IsCommonEdge(N->MergePred, N))
             Count++;
     }
     if (Count > 2)

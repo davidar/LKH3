@@ -121,10 +121,10 @@ BridgeGain(Node * s1, Node * s2, Node * s3, Node * s4,
                     (s8 ||
                      ((t4 != s6 || t1 != s1) &&
                       (t4 != s1 || t1 != s6))) &&
-                    (CurrentPenalty > 0 ||
+                    (PenaltyAware ||
                      TSPTW_Makespan || !c || G2 - c(t4, t1) > 0)) {
                     Gain = G2 - C(t4, t1);
-                    if ((CurrentPenalty > 0 || TSPTW_Makespan || Gain > 0)) {
+                    if (PenaltyAware || TSPTW_Makespan || Gain > 0) {
                         switch (Case6) {
                         case 0:
                             if (X4 == 1)

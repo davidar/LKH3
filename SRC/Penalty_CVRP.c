@@ -13,14 +13,21 @@ GainType Penalty_CVRP()
         StartRoute -= DimensionSaved;
     N = StartRoute;
     do {
+        int Size = -1;
         CurrentRoute = N;
         DemandSum = 0;
-        do
+        do {
             DemandSum += N->Demand;
-        while ((N = SUCC(N))->DepotId == 0);
-        if (DemandSum > Capacity &&
-            ((P += DemandSum - Capacity) > CurrentPenalty ||
-             (P == CurrentPenalty && CurrentGain <= 0))) {
+            Size++;
+        } while ((N = SUCC(N))->DepotId == 0);
+        if (MTSPMinSize >= 1 && Size < MTSPMinSize)
+            P += MTSPMinSize - Size;
+        if (Size > MTSPMaxSize)
+            P += Size - MTSPMaxSize;
+        if (DemandSum > Capacity)
+            P += DemandSum - Capacity;
+        if (P > CurrentPenalty ||
+            (P == CurrentPenalty && CurrentGain <= 0)) {
             StartRoute = CurrentRoute;
             return CurrentPenalty + (CurrentGain > 0);
         }

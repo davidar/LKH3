@@ -2,7 +2,7 @@
 #include "Genetic.h"
 
 /*
- * The AddToPopulation function adds the current tour as an individual to 
+ * The AddToPopulation function adds the current tour as an individual to
  * the population. The fitness of the individual is set equal to the cost
  * of the tour. The population is kept sorted in increasing fitness order.
  */
@@ -13,15 +13,13 @@ void AddToPopulation(GainType Penalty, GainType Cost)
     Node *N;
 
     if (!Population) {
-        assert(Population =
-               (int **) malloc(MaxPopulationSize * sizeof(int *)));
+        Population = (int **) malloc(MaxPopulationSize * sizeof(int *));
         for (i = 0; i < MaxPopulationSize; i++)
-            assert(Population[i] =
-                   (int *) malloc((1 + Dimension) * sizeof(int)));
-        assert(PenaltyFitness =
-               (GainType *) malloc(MaxPopulationSize * sizeof(GainType)));
-        assert(Fitness =
-               (GainType *) malloc(MaxPopulationSize * sizeof(GainType)));
+            Population[i] = (int *) malloc((1 + Dimension) * sizeof(int));
+        PenaltyFitness =
+           (GainType *) malloc(MaxPopulationSize * sizeof(GainType));
+        Fitness =
+           (GainType *) malloc(MaxPopulationSize * sizeof(GainType));
     }
     for (i = PopulationSize;
          i >= 1 && SmallerFitness(Penalty, Cost, i - 1); i--) {
@@ -62,8 +60,10 @@ void ApplyCrossover(int i, int j)
         printff("Crossover(%d,%d)\n", i + 1, j + 1);
     /* Apply the crossover operator */
     Crossover();
-    if (ProblemType == SOP)
+    if (ProblemType == SOP || ProblemType == M1_PDTSP)
         SOP_RepairTour();
+    if (ProblemType == PCTSP)
+        PCTSP_RepairTour();
 }
 
 #define Free(s) { free(s); s = 0; }
@@ -142,8 +142,6 @@ int LinearSelection(int Size, double Bias)
 /*
  * The MergeTourWithIndividual function attempts to find a short tour by
  * merging the current tour with a specified inddividual of the population.
- * The merging algorithm is the iterative partial transcription algrithm
- * described by Mobius, Freisleben, Merz and Schreiber.
  */
 
 GainType MergeTourWithIndividual(int i)
@@ -174,15 +172,13 @@ void PrintPopulation()
         else
             printff(GainFormat, Fitness[i]);
          if (Optimum != MINUS_INFINITY && Optimum != 0) {
-             if (ProblemType != CCVRP && ProblemType != TRP &&
-                 ProblemType != MLP &&
-                 MTSPObjective != MINMAX &&
-                 MTSPObjective != MINMAX_SIZE) 
+             if (!Penalty || !OptimizePenalty)
                  printff(", Gap = %0.4f%%",
-                        100.0 * (Fitness[i] - Optimum) / Optimum);
+                         100.0 * (Fitness[i] - Optimum) / Optimum);
              else
-                printff(", Gap = %0.4f%%",
-                        100.0 * (PenaltyFitness[i] - Optimum) / Optimum);
+                 printff(", Gap = %0.4f%%",
+                         (ProblemType == MSCTSP ? -1 : 1) *
+                         100.0 * (PenaltyFitness[i] - Optimum) / Optimum);
         }
         printff("\n");
     }
@@ -230,8 +226,8 @@ void ReplaceIndividualWithTour(int i, GainType Penalty, GainType Cost)
 }
 
 /* 
- * The DistanceToIndividual returns the number of different edges between 
- * the tour (given by OldSuc) and individual i. 
+ * The DistanceToIndividual returns the number of different edges between
+ * the tour (given by OldSuc) and individual i.
  */
 
 static int DistanceToIndividual(int i)

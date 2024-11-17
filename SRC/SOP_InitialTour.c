@@ -13,8 +13,11 @@ GainType SOP_InitialTour()
     int FringeNodes = 0, *Subset, Count, i;
     GainType Cost;
     Constraint *Con;
+    double EntryTime = GetTime();
 
     assert(Asymmetric);
+    if (TraceLevel >= 1)
+        printff("SOP = ");
     N = FirstNode;
     do
         N->InDegree = 0;
@@ -26,8 +29,8 @@ GainType SOP_InitialTour()
     } while ((N = N->Suc) != FirstNode);
     if (ProblemType == SOP)
         NodeSet[DimensionSaved].InDegree = DimensionSaved - 1;
-    assert(Fringe = (Node **) malloc(DimensionSaved * sizeof(Node *)));
-    assert(Subset = (int *) malloc(DimensionSaved * sizeof(int)));
+    Fringe = (Node **) malloc(DimensionSaved * sizeof(Node *));
+    Subset = (int *) malloc(DimensionSaved * sizeof(int));
     First = Last = &NodeSet[1];
     First->Prev = First->Next = First;
     FringeNodes = 0;
@@ -88,5 +91,14 @@ GainType SOP_InitialTour()
     while ((N = N->Suc) != First);
     CurrentPenalty = PLUS_INFINITY;
     CurrentPenalty = Penalty ? Penalty() : 0;
+    if (TraceLevel >= 1) {
+        if (Salesmen > 1 || ProblemType == SOP || ProblemType == PCTSP)
+            printff(GainFormat "_" GainFormat, CurrentPenalty, Cost);
+        else
+            printff(GainFormat, Cost);
+        if (Optimum != MINUS_INFINITY && Optimum != 0)
+            printff(", Gap = %0.2f%%", 100.0 * (Cost - Optimum) / Optimum);
+        printff(", Time = %0.2f sec.\n", fabs(GetTime() - EntryTime));
+    }
     return Cost / Precision;
 }

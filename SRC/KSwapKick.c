@@ -19,12 +19,12 @@ void KSwapKick(int K)
     Node **s, *N;
     int Count, i;
 
-    assert(s = (Node **) malloc(K * sizeof(Node *)));
+    s = (Node **) malloc(K * sizeof(Node *));
     Count = 0;
     N = FirstNode;
     do {
         N->Rank = ++Count;
-        N->V = 0;
+        N->V = FixedOrCommon(N, N->Suc);
     } while ((N = N->Suc) != FirstNode);
     N = s[0] = RandomNode();
     if (!N)
@@ -68,7 +68,7 @@ static Node *RandomNode()
             N = N->Suc;
     }
     Count = 0;
-    while ((N->V || FixedOrCommon(N, N->Suc)) && Count < Dimension) {
+    while (N->V && Count < Dimension) {
         N = N->Suc;
         Count++;
     }

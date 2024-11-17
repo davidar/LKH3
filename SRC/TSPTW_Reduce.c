@@ -8,9 +8,9 @@ void TSPTW_Reduce()
 
     if (Salesmen > 1)
         return;
-    assert(R = (char **) malloc(((n + 1) * sizeof(char *))));
+    R = (char **) malloc(((n + 1) * sizeof(char *)));
     for (i = 1; i <= n; i++)
-        assert(R[i] = (char *) calloc(n + 1, sizeof(char)));
+        R[i] = (char *) calloc(n + 1, sizeof(char));
     for (i = 1; i <= n; i++)
         for (j = 1; j <= n; j++)
             if (j != i &&
@@ -34,7 +34,7 @@ void TSPTW_Reduce()
             if (i != j && R[i][j]) {
                 Node *Nj = &NodeSet[j];
                 Constraint *Con;
-                assert(Con = (Constraint *) malloc(sizeof(Constraint)));
+                Con = (Constraint *) malloc(sizeof(Constraint));
                 Con->t1 = Ni;
                 Con->t2 = Nj;
                 Con->Suc = FirstConstraint;

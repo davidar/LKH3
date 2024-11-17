@@ -15,7 +15,7 @@ void SINTEF_WriteSolution(char *FileName, GainType Cost)
     if (TraceLevel >= 1)
         printff("Writing SINTEF_SOLUTION_FILE: \"%s\" ... ",
                 FullFileName);
-    assert(ResultFile = fopen(FullFileName, "w"));
+    ResultFile = fopen(FullFileName, "w");
     fprintf(ResultFile, "Instance name : %s\n", Name);
     fprintf(ResultFile, "Authors       : Keld Helsgaun\n");
     fprintf(ResultFile, "Date          : %s", ctime(&Now));

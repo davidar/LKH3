@@ -19,7 +19,7 @@ static int HeapCapacity;        /* Its capacity */
 
 void HeapMake(int Size)
 {
-    assert(Heap = (Node **) malloc((Size + 1) * sizeof(Node *)));
+    Heap = (Node **) malloc((Size + 1) * sizeof(Node *));
     HeapCapacity = Size;
     HeapCount = 0;
 }

@@ -14,6 +14,9 @@ int Distance_MTSP(Node * Na, Node * Nb)
         return 0;
     if (Forbidden(Na, Nb))
         return M;
+    if (ProblemType == GCTSP &&
+        (Na->DepotId != 0 || Nb->DepotId != 0))
+        return 0;
     if (Na->DepotId != 0 && Nb->DepotId != 0)
         return 0;
     if (DimensionSaved != Dimension) {

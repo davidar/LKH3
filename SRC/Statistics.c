@@ -1,13 +1,13 @@
 #include "LKH.h"
 
-static int TrialsMin, TrialsMax, TrialSum, Successes;
+static int TrialsMin, TrialsMax, TrialSum, Successes, Updates;
 static GainType CostMin, CostMax, CostSum;
 static GainType PenaltyMin, PenaltyMax, PenaltySum;
 static double TimeMin, TimeMax, TimeSum;
 
 void InitializeStatistics()
 {
-    TrialSum = Successes = 0;
+    TrialSum = Successes = Updates = 0;
     CostSum = 0;
     TimeSum = 0.0;
     TrialsMin = INT_MAX;
@@ -33,9 +33,8 @@ void UpdateStatistics(GainType Cost, double Time)
     if (Cost > CostMax)
         CostMax = Cost;
     CostSum += Cost;
-    if (ProblemType != CCVRP && ProblemType != TRP &&
-        ProblemType != MLP &&
-        MTSPObjective != MINMAX && MTSPObjective != MINMAX_SIZE) {
+
+    if (!OptimizePenalty) {
         if (CurrentPenalty == 0 && Cost <= Optimum)
             Successes++;
     } else if (CurrentPenalty <= Optimum)
@@ -50,11 +49,13 @@ void UpdateStatistics(GainType Cost, double Time)
     if (Time > TimeMax)
         TimeMax = Time;
     TimeSum += Time;
+    Updates++;
 }
 
 void PrintStatistics()
 {
-    int _Runs = Runs, _TrialsMin = TrialsMin;
+    int _Runs = Updates;
+    int _TrialsMin = TrialsMin;
     double _TimeMin = TimeMin;
     GainType _Optimum = Optimum;
 
@@ -65,10 +66,7 @@ void PrintStatistics()
         _TrialsMin = 0;
     if (_TimeMin > TimeMax)
         _TimeMin = 0;
-    if (ProblemType != CCVRP && ProblemType != TRP &&
-        ProblemType != MLP &&
-        MTSPObjective != MINMAX && MTSPObjective != MINMAX_SIZE &&
-        CostMin <= CostMax && CostMin != PLUS_INFINITY) {
+    if (!OptimizePenalty) {
         printff("Cost.min = " GainFormat ", Cost.avg = %0.2f, "
                 "Cost.max = " GainFormat "\n",
                 CostMin, (double) CostSum / _Runs, CostMax);
@@ -77,9 +75,12 @@ void PrintStatistics()
         if (_Optimum != 0)
             printff("Gap.min = %0.4f%%, Gap.avg = %0.4f%%, "
                     "Gap.max = %0.4f%%\n",
+                    (ProblemType == MSCTSP ? -1 : 1) *
                     100.0 * (CostMin - _Optimum) / _Optimum,
+                    (ProblemType == MSCTSP ? -1 : 1) *
                     100.0 * ((double) CostSum / _Runs -
                              _Optimum) / _Optimum,
+                    (ProblemType == MSCTSP ? -1 : 1) *
                     100.0 * (CostMax - _Optimum) / _Optimum);
         if (Penalty && PenaltyMin != PLUS_INFINITY)
             printff("Penalty.min = " GainFormat ", Penalty.avg = %0.2f, "
@@ -94,14 +95,19 @@ void PrintStatistics()
         if (_Optimum != 0)
             printff("Gap.min = %0.4f%%, Gap.avg = %0.4f%%, "
                     "Gap.max = %0.4f%%\n",
+                    (ProblemType == MSCTSP ? -1 : 1) *
                     100.0 * (PenaltyMin - _Optimum) / _Optimum,
+                    (ProblemType == MSCTSP ? -1 : 1) *
                     100.0 * ((double) PenaltySum / _Runs -
                              _Optimum) / _Optimum,
+                    (ProblemType == MSCTSP ? -1 : 1) *
                     100.0 * (PenaltyMax - _Optimum) / _Optimum);
     }
     printff("Trials.min = %d, Trials.avg = %0.1f, Trials.max = %d\n",
             _TrialsMin, 1.0 * TrialSum / _Runs, TrialsMax);
     printff
-        ("Time.min = %0.2f sec., Time.avg = %0.2f sec., Time.max = %0.2f sec.\n",
+        ("Time.min = %0.2f sec., Time.avg = %0.2f sec., "
+         "Time.max = %0.2f sec.\n",
          fabs(_TimeMin), fabs(TimeSum) / _Runs, fabs(TimeMax));
+    printff("Time.total = %0.2f sec.\n", GetTime() - StartTime);
 }

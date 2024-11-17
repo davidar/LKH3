@@ -97,7 +97,7 @@ void OrderCandidateSet(int MaxCandidates, GainType MaxAlpha, int Symmetric)
                 NFrom->Alpha =
                     Beta != INT_MIN ? max(NFrom->Cost - Beta, 0) : INT_MAX;
                 if (NFrom->Alpha > MaxAlpha &&
-                    !DelaunayPure && CandidateSetType != POPMUSIC)
+                    !DelaunayPure && CandidateSetType == DELAUNAY)
                     NFrom->Alpha = INT_MAX;
             }
         }
@@ -105,7 +105,7 @@ void OrderCandidateSet(int MaxCandidates, GainType MaxAlpha, int Symmetric)
     }
     while ((From = From->Suc) != FirstNode);
 
-    if (MaxCandidates > 0 && !DelaunayPure && CandidateSetType != POPMUSIC) {
+    if (MaxCandidates > 0 && !DelaunayPure && CandidateSetType == DELAUNAY) {
         do {
             int Count = 0;
             for (NFrom = From->CandidateSet; NFrom->To; NFrom++)

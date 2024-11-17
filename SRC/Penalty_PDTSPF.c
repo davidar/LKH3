@@ -12,7 +12,7 @@ GainType Penalty_PDTSPF()
     int QueueLength, Front, Back, Capacity = Dim;
 
     if (!Queue)
-        assert(Queue = (int *) malloc(Capacity * sizeof(int)));
+        Queue = (int *) malloc(Capacity * sizeof(int));
     if (!StartRoute)
         StartRoute = Depot;
     if (StartRoute->Id > DimensionSaved)

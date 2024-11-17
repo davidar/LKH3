@@ -31,37 +31,36 @@ void AllocateStructures()
     Free(tSaved);
 
     HeapMake(Dimension);
-    assert(BestTour = (int *) calloc(1 + Dimension, sizeof(int)));
-    assert(BetterTour = (int *) calloc(1 + Dimension, sizeof(int)));
-    assert(HTable = (HashTable *) malloc(sizeof(HashTable)));
+    BestTour = (int *) calloc(1 + Dimension, sizeof(int));
+    BetterTour = (int *) calloc(1 + Dimension, sizeof(int));
+    HTable = (HashTable *) malloc(sizeof(HashTable));
     HashInitialize((HashTable *) HTable);
     SRandom(Seed);
-    assert(Rand = (unsigned *)
-           malloc((Dimension + 1) * sizeof(unsigned)));
+    Rand = (unsigned *) malloc((Dimension + 1) * sizeof(unsigned));
     for (i = 1; i <= Dimension; i++)
         Rand[i] = Random();
     SRandom(Seed);
     if (WeightType != EXPLICIT) {
         for (i = 0; (1 << i) < (Dimension << 1); i++);
         i = 1 << i;
-        assert(CacheSig = (int *) calloc(i, sizeof(int)));
-        assert(CacheVal = (int *) calloc(i, sizeof(int)));
+        CacheSig = (int *) calloc(i, sizeof(int));
+        CacheVal = (int *) calloc(i, sizeof(int));
         CacheMask = i - 1;
     }
     AllocateSegments();
     K = MoveType;
     if (SubsequentMoveType > K)
         K = SubsequentMoveType;
-    assert(T = (Node **) malloc((1 + 2 * K) * sizeof(Node *)));
-    assert(G = (GainType *) malloc(2 * K * sizeof(GainType)));
-    assert(t = (Node **) malloc(6 * K * sizeof(Node *)));
-    assert(tSaved = (Node **) malloc((1 + 2 * K) * sizeof(Node *)));
-    assert(p = (int *) malloc(6 * K * sizeof(int)));
-    assert(q = (int *) malloc(6 * K * sizeof(int)));
-    assert(incl = (int *) malloc(6 * K * sizeof(int)));
-    assert(cycle = (int *) malloc(6 * K * sizeof(int)));
-    assert(SwapStack =
-           (SwapRecord *) malloc((MaxSwaps + 6 * K) * sizeof(SwapRecord)));
+    T = (Node **) malloc((1 + 2 * K) * sizeof(Node *));
+    G = (GainType *) malloc(2 * K * sizeof(GainType));
+    t = (Node **) malloc(6 * K * sizeof(Node *));
+    tSaved = (Node **) malloc((1 + 2 * K) * sizeof(Node *));
+    p = (int *) malloc(6 * K * sizeof(int));
+    q = (int *) malloc(6 * K * sizeof(int));
+    incl = (int *) malloc(6 * K * sizeof(int));
+    cycle = (int *) malloc(6 * K * sizeof(int));
+    SwapStack =
+        (SwapRecord *) malloc((MaxSwaps + 6 * K) * sizeof(SwapRecord));
     BIT_Make(Dim);
 }
 
@@ -85,7 +84,7 @@ void AllocateSegments()
 #endif
     Groups = 0;
     for (i = Dimension, SPrev = 0; i > 0; i -= GroupSize, SPrev = S) {
-        assert(S = (Segment *) malloc(sizeof(Segment)));
+        S = (Segment *) malloc(sizeof(Segment));
         S->Rank = ++Groups;
         if (!SPrev)
             FirstSegment = S;
