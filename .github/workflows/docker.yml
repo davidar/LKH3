@@ -50,5 +50,6 @@ jobs:
       run: echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
     - name: Push Docker image
-      run: docker tag lkh ghcr.io/${{ github.repository }}/lkh:latest
-      run: docker push ghcr.io/${{ github.repository }}/lkh:latest
+      run: |
+        docker tag lkh ghcr.io/${{ github.repository }}/lkh:latest
+        docker push ghcr.io/${{ github.repository }}/lkh:latest
