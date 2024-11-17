@@ -10,8 +10,9 @@ WORKDIR /app
 # Copy the project files into the Docker image
 COPY . .
 
-# Run make to build the project using musl-gcc
-RUN make -C SRC
+RUN mkdir -p SRC/OBJ
+
+RUN make CFLAGS="-O3 -Wall -IINCLUDE -DTWO_LEVEL_TREE -g -flto -fcommon -static"
 
 # Create the final stage
 FROM scratch
