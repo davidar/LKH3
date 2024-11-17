@@ -1,0 +1,19 @@
+[package]
+name = 'davidar/LKH3'
+version = '0.1.0'
+description = 'LKH is an implementation of the Lin-Kernighan traveling salesman heuristic.'
+
+# See more keys and definitions at https://docs.wasmer.io/registry/manifest
+
+[[module]]
+name = 'LKH3'
+source = 'LKH.wasm'
+abi = 'wasi'
+
+[module.interfaces]
+wasi = '0.1.0-unstable'
+
+[[command]]
+name = 'LKH3'
+module = 'LKH3'
+runner = 'wasi'
