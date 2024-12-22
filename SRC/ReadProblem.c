@@ -131,7 +131,7 @@
  * SPECIAL      There is a special distance function implemented in
  *              the Distance_SPECIAL function.
  *
- * EDGE-WEIGHT_FORMAT : <string>
+ * EDGE_WEIGHT_FORMAT : <string>
  * Describes the format of the edge weights if they are given explicitly.
  * The values are
  * FUNCTION         Weights are given by a function (see above)
