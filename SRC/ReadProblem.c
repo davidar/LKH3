@@ -1060,7 +1060,7 @@ static int FixEdge(Node * Na, Node * Nb)
         return 0;
     if (!Nb->FixedTo1 || Nb->FixedTo1 == Na)
         Nb->FixedTo1 = Na;
-    else if (!Nb->FixedTo2 || Nb->FixedTo1 == Na)
+    else if (!Nb->FixedTo2 || Nb->FixedTo2 == Na)
         Nb->FixedTo2 = Na;
     else
         return 0;
