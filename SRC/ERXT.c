@@ -29,7 +29,7 @@ static int Tabu;
 
 static Node *SelectNext(Node * N);
 
-void ERXT()
+void ERXT(void)
 {
     Node *N, *Next;
     int i;

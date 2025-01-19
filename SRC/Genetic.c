@@ -73,7 +73,7 @@ void ApplyCrossover(int i, int j)
  * population.
  */
 
-void FreePopulation()
+void FreePopulation(void)
 {
     if (Population) {
         int i;
@@ -113,7 +113,7 @@ int HasFitness(GainType Penalty, GainType Cost)
  * in the range [0;1).
  */
 
-static double Random01()
+static double Random01(void)
 {
     return ((double) Random()) / INT_MAX;
 }
@@ -160,7 +160,7 @@ GainType MergeTourWithIndividual(int i)
  * each individual of the population.
  */
 
-void PrintPopulation()
+void PrintPopulation(void)
 {
     int i;
     printff("Population:\n");

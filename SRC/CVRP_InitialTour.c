@@ -12,10 +12,10 @@
 
 static Node *Find(Node * v);
 static void Union(Node * x, Node * y);
-static void MakeSets();
+static void MakeSets(void);
 static void Distribute(int Constrained, double R);
 static int compareValue(const void *s1, const void *s2);
-static void CreateS();
+static void CreateS(void);
 
 typedef struct Saving {
     int Value, i, j;
@@ -24,7 +24,7 @@ typedef struct Saving {
 static Saving *S;
 static int Sets, SSize;
 
-GainType CVRP_InitialTour()
+GainType CVRP_InitialTour(void)
 {
     Node *N, *Last, *Next, *Tour;
     int s, Dim = Dimension - Salesmen + 1, it;
@@ -131,7 +131,7 @@ GainType CVRP_InitialTour()
     return Cost;
 }
 
-void CreateS()
+void CreateS(void)
 {
     int Dim = Dimension - Salesmen + 1, i, j;
     Node *Ni, *Nj;
@@ -193,7 +193,7 @@ static void Union(Node * x, Node * y)
     Sets--;
 }
 
-static void MakeSets()
+static void MakeSets(void)
 {
     Node *N = FirstNode;
     Sets = 0;

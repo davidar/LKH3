@@ -8,7 +8,7 @@
  * 2-opt moves in this reversed sequence.
  */
 
-void RestoreTour()
+void RestoreTour(void)
 {
     Node *t1, *t2, *t3, *t4;
 

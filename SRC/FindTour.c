@@ -15,10 +15,10 @@
  * The original candidate set is re-established at exit from FindTour.
  */
 
-static void SwapCandidateSets();
+static void SwapCandidateSets(void);
 static GainType OrdinalTourCost;
 
-GainType FindTour()
+GainType FindTour(void)
 {
     GainType Cost;
     Node *t;
@@ -159,7 +159,7 @@ GainType FindTour()
  * The SwapCandidateSets function swaps the normal and backbone candidate sets.
  */
 
-static void SwapCandidateSets()
+static void SwapCandidateSets(void)
 {
     Node *t = FirstNode;
     do {

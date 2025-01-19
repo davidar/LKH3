@@ -17,7 +17,7 @@
 
 static void KMeansClustering(int K);
 
-void SolveKMeansSubproblems()
+void SolveKMeansSubproblems(void)
 {
     Node *N;
     GainType GlobalBestCost, OldGlobalBestCost;

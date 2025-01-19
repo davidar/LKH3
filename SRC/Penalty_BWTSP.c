@@ -1,7 +1,7 @@
 #include "LKH.h"
 #include "Segment.h"
 
-GainType Penalty_BWTSP()
+GainType Penalty_BWTSP(void)
 {
     Node *N = &NodeSet[1], *NextN, *CurrentNode;
     int Forward = SUCC(N)->Id != N->Id + DimensionSaved;

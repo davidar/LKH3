@@ -45,7 +45,7 @@
  * T1 and T2, and the shortest tour found is selected.
  */
 
-GainType MergeWithTourCLARIST()
+GainType MergeWithTourCLARIST(void)
 {
     Node *N, *Prev;
     rec *ptcur;
@@ -217,7 +217,7 @@ GainType MergeWithTourCLARIST()
     return BestCost;
 }
 
-int merge_clarist()
+int merge_clarist(void)
 {
     rec *ptcur;
     int i, j;
@@ -226,7 +226,7 @@ int merge_clarist()
     tag_all_components();
     if (difnegfnd) {
         reduce_path_tour2();
-        for (i = 1; i <= difnbr; i++) {
+        for (i = 0; i <= difnbr; i++) {
             grp2[i] = i;
             grp2N[i] = i;
             diftst1[i] = 0;
@@ -290,7 +290,7 @@ int merge_clarist()
     return 0;
 }
 
-void reduce_path_tour1()
+void reduce_path_tour1(void)
 {
     rec *ptcur, *ptcom;
 
@@ -356,8 +356,8 @@ void tag_one_component(rec * ptcur)
         difnegfnd = 1;
     difcnt++;
 }
-
-void tag_all_components()
+ 
+void tag_all_components(void)
 {
     rec *ptcur, *ptcom, *pttmp;
     long long diftag;
@@ -399,7 +399,7 @@ void tag_all_components()
     difnbr = difcnt - 1;
 }
 
-void reduce_path_tour2()
+void reduce_path_tour2(void)
 {
     rec *ptcur, *ptcom, *pttmp;
     long long diftag;
@@ -423,7 +423,7 @@ void reduce_path_tour2()
     } while (ptcur != ptdebcom2);
 }
 
-void fuse_components()
+void fuse_components(void)
 {
     rec *ptcur, *ptcom, *ptcom1;
     int diftag, idxdif, grp2idxdif;
@@ -467,7 +467,7 @@ void fuse_components()
     } while (ptcom1 != ptcom);
 }
 
-void validate_components()
+void validate_components(void)
 {
     rec *ptcom, *ptcur;
     rec *ptout[MAXDIFNBR + 1];
@@ -522,7 +522,7 @@ void validate_components()
     } while (ptcom != ptdebcom2);
 }
 
-int valid_tour()
+int valid_tour(void)
 {
     rec *ptcur;
 
@@ -538,7 +538,7 @@ int valid_tour()
     return cntC2 == totC21;
 }
 
-void generate_offspring()
+void generate_offspring(void)
 {
     rec *ptcur, *ptlas, *ptlas2, *pt1C;
 

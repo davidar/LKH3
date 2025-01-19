@@ -28,7 +28,7 @@
  *   Physical Review E, Volume 59, Number 4, pp. 4667-4674, 1999.
  */
 
-GainType MergeWithTourIPT()
+GainType MergeWithTourIPT(void)
 {
     int Rank = 0, Improved1 = 0, Improved2 = 0;
     int SubSize1, SubSize2, MaxSubSize1, NewDimension = 0, Forward;

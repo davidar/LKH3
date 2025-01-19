@@ -15,7 +15,7 @@
  * The CreateCandidateSet function itself is called from LKHmain.
  */
 
-void CreateCandidateSet()
+void CreateCandidateSet(void)
 {
     GainType Cost, MaxAlpha, A;
     Node *Na;

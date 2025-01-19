@@ -494,7 +494,7 @@ static char *ReadYesOrNo(int *V);
 #undef max
 static size_t max(size_t a, size_t b);
 
-void ReadParameters()
+void ReadParameters(void)
 {
     char *Line, *Keyword, *Token, *Name;
     unsigned int i;

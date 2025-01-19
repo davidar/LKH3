@@ -1,7 +1,7 @@
 #include "LKH.h"
 #include "Segment.h"
 
-GainType Penalty_SOP()
+GainType Penalty_SOP(void)
 {
     Node *First = &NodeSet[1], *N = First;
     int P, i = 1, j;

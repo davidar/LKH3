@@ -10,7 +10,7 @@
  * found.    
  */
 
-void RecordBestTour()
+void RecordBestTour(void)
 {
     int i;
 

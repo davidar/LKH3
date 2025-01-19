@@ -3,7 +3,7 @@
 
 static int *Queue;
 
-GainType Penalty_PDTSPF()
+GainType Penalty_PDTSPF(void)
 {
     static Node *StartRoute = 0;
     Node *N, *NextN, *CurrentRoute;

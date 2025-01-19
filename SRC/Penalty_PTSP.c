@@ -1,15 +1,15 @@
 #include "LKH.h"
 #include "Segment.h"
 
-GainType Penalty_PTSP1();
-GainType Penalty_PTSP2();
-GainType Penalty_PTSP3();
+GainType Penalty_PTSP1(void);
+GainType Penalty_PTSP2(void);
+GainType Penalty_PTSP3(void);
 
-GainType Penalty_PTSP() {
+GainType Penalty_PTSP(void) {
     return Penalty_PTSP3();
 }
 
-GainType Penalty_PTSP1()
+GainType Penalty_PTSP1(void)
 {
     int *t;
     double **Q;
@@ -45,7 +45,7 @@ GainType Penalty_PTSP1()
     return 100.0 * P;
 }
 
-GainType Penalty_PTSP2()
+GainType Penalty_PTSP2(void)
 {
     Node *N, **T;
     int i, j, k, n = Dimension;
@@ -86,7 +86,7 @@ GainType Penalty_PTSP2()
     return 100 * P;
 }
 
-GainType Penalty_PTSP3()
+GainType Penalty_PTSP3(void)
 {
     Node *N, **T;
     int i = 0, r, n = Dimension;

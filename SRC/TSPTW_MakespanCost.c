@@ -1,7 +1,7 @@
 #include "LKH.h"
 #include "Segment.h"
 
-GainType TSPTW_MakespanCost()
+GainType TSPTW_MakespanCost(void)
 {
     Node *N = Depot, *NextN;
     GainType Sum = 0;

@@ -11,7 +11,7 @@
  *    Diplomarbeit, Martin-Luther-Universitat Halle-Wittenberg, 2006.
  */
 
-static Node *RandomNode();
+static Node *RandomNode(void);
 static int compare(const void *Na, const void *Nb);
 
 void KSwapKick(int K)
@@ -55,7 +55,7 @@ void KSwapKick(int K)
  * previously been chosen.
  */
 
-static Node *RandomNode()
+static Node *RandomNode(void)
 {
     Node *N;
     int Count;

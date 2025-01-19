@@ -5,7 +5,7 @@
  * number of candidates associated with a node.
  */
 
-void CandidateReport()
+void CandidateReport(void)
 {
     int Min = INT_MAX, Max = 0, Fixed = 0, Count;
     GainType Sum = 0, Cost = 0;

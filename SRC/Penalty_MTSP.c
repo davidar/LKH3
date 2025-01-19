@@ -1,7 +1,7 @@
 #include "LKH.h"
 #include "Segment.h"
 
-GainType Penalty_MTSP_MINSUM()
+GainType Penalty_MTSP_MINSUM(void)
 {
     int Forward = SUCC(Depot)->Id != Depot->Id + DimensionSaved;
     Node *N = Depot, *NextN;
@@ -40,7 +40,7 @@ GainType Penalty_MTSP_MINSUM()
     return P;
 }
 
-GainType Penalty_MTSP_MINMAX()
+GainType Penalty_MTSP_MINMAX(void)
 {
     int Forward = SUCC(Depot)->Id != Depot->Id + DimensionSaved;
     static Node *StartRoute = 0;
@@ -74,7 +74,7 @@ GainType Penalty_MTSP_MINMAX()
     return MaxCost;
 }
 
-GainType Penalty_MTSP_MINMAX_SIZE()
+GainType Penalty_MTSP_MINMAX_SIZE(void)
 {
     int Forward = SUCC(Depot)->Id != Depot->Id + DimensionSaved;
     static Node *StartRoute = 0;

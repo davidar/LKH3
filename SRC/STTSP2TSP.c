@@ -3,7 +3,7 @@
 
 static void Dijkstra(Node * Source);
 
-void STTSP2TSP()
+void STTSP2TSP(void)
 {
     int NewDimension = 0, i, j, k;
     int **Matrix;

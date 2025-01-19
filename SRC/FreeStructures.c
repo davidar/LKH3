@@ -8,7 +8,7 @@
 
 #define Free(s) { free(s); s = 0; }
 
-void FreeStructures()
+void FreeStructures(void)
 {
     FreeCandidateSets();
     FreeSegments();
@@ -53,7 +53,7 @@ void FreeStructures()
    The FreeSegments function frees the segments.
  */
 
-void FreeSegments()
+void FreeSegments(void)
 {
     if (FirstSegment) {
         Segment *S = FirstSegment, *SPrev;
@@ -79,7 +79,7 @@ void FreeSegments()
  * The FreeCandidateSets function frees the candidate sets.
  */
 
-void FreeCandidateSets()
+void FreeCandidateSets(void)
 {
     Node *N = FirstNode;
     if (!N)

@@ -1,7 +1,7 @@
 #include "LKH.h"
 #include "Heap.h"
 
-void MTSP2TSP()
+void MTSP2TSP(void)
 {
     Node *N = 0;
     int i, AnyFixed = 0;

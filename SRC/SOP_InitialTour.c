@@ -7,7 +7,7 @@
 
 #define InDegree V
 
-GainType SOP_InitialTour()
+GainType SOP_InitialTour(void)
 {
     Node **Fringe, *First = 0, *Last, *N;
     int FringeNodes = 0, *Subset, Count, i;

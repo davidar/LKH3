@@ -10,7 +10,7 @@
 
 static int compare(const void *Na, const void *Nb);
 
-GainType TSPDL_InitialTour()
+GainType TSPDL_InitialTour(void)
 {
     Node **T, *N, *Last, *Temp;
     int i, j;

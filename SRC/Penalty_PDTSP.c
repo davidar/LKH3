@@ -1,7 +1,7 @@
 #include "LKH.h"
 #include "Segment.h"
 
-GainType Penalty_PDTSP()
+GainType Penalty_PDTSP(void)
 {
     static Node *StartRoute = 0;
     Node *N, *NextN, *M, *CurrentRoute;;

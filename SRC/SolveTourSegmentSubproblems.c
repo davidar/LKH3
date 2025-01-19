@@ -16,7 +16,7 @@
  * used as a starting point for the first segment. 
  */
 
-void SolveTourSegmentSubproblems()
+void SolveTourSegmentSubproblems(void)
 {
     Node *FirstNodeSaved, *N;
     int CurrentSubproblem, Subproblems, Round, i;

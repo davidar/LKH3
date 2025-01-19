@@ -19,7 +19,7 @@
  * whether a tentative non-gainful move should be considered. 
  */
 
-void StoreTour()
+void StoreTour(void)
 {
     Node *t, *u;
     Candidate *Nt;

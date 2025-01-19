@@ -8,7 +8,7 @@
  * node point to its neighbors, and the tour cost is returned.
  */
 
-GainType MergeTourWithBestTour()
+GainType MergeTourWithBestTour(void)
 {
     Node *N1, *N2, *M1, *M2;
     int i;

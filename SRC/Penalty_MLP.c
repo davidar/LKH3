@@ -1,7 +1,7 @@
 #include "LKH.h"
 #include "Segment.h"
 
-GainType Penalty_MLP()
+GainType Penalty_MLP(void)
 {
     static Node *StartRoute = 0;
     Node *N, *NextN, *CurrentRoute;

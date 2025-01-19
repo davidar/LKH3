@@ -1,7 +1,7 @@
 #include "LKH.h"
 #include "Segment.h"
 
-GainType Penalty_CVRP()
+GainType Penalty_CVRP(void)
 {
     static Node *StartRoute = 0;
     Node *N, *CurrentRoute;

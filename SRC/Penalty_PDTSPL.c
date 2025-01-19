@@ -3,7 +3,7 @@
 
 static int *Stack;
 
-GainType Penalty_PDTSPL()
+GainType Penalty_PDTSPL(void)
 {
     static Node *StartRoute = 0;
     Node *N, *NextN, *CurrentRoute;

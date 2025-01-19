@@ -388,9 +388,9 @@ static int reversed;
 static char *dontLook;
 static GainType tourLength;
 
-static void createNeighbors();
-static void threeOpt();
-static void doubleBridgeKick();
+static void createNeighbors(void);
+static void threeOpt(void);
+static void doubleBridgeKick(void);
 static int prev(int v);
 static int next(int v);
 static int PREV(int v);
@@ -534,7 +534,7 @@ static void flip(int from, int to)
     }
 }
 
-static void threeOpt()
+static void threeOpt(void)
 {
     int improved = 1, a, b, c, d, e, f, xa, xc, xe, i, j;
     GainType g0, g1, g2, g3, gain;
@@ -632,7 +632,7 @@ static void threeOpt()
     }
 }
 
-static void createNeighbors()
+static void createNeighbors(void)
 {
     int i, j, k, d;
 
@@ -677,7 +677,7 @@ static int select_t(int i, int t[4])
     return r;
 }
 
-static void doubleBridgeKick()
+static void doubleBridgeKick(void)
 {
     int t[4], a, b, c, d, e, f, g, h, i;
 

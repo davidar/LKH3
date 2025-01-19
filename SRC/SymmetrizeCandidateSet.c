@@ -5,7 +5,7 @@
  * that every candidate edge is associated with both its two end nodes. 
 */
 
-void SymmetrizeCandidateSet()
+void SymmetrizeCandidateSet(void)
 {
     Node *From, *To;
     Candidate *NFrom;

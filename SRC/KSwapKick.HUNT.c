@@ -20,9 +20,9 @@
 #define WALK_STEPS 100
 #define HUNT_COUNT (10 + Dimension / 1000)
 
-static Node *RandomNode();
+static Node *RandomNode(void);
 static Node *RandomWalkNode(Node * N);
-static Node *LongEdgeNode();
+static Node *LongEdgeNode(void);
 static int compare(const void *Na, const void *Nb);
 
 void KSwapKick(int K)
@@ -67,7 +67,7 @@ void KSwapKick(int K)
  * previously been chosen.
  */
 
-static Node *RandomNode()
+static Node *RandomNode(void)
 {
     Node *N;
     int Count;
@@ -124,7 +124,7 @@ static Node *RandomWalkNode(Node * N)
  *        C(R, R->Suc) - C(R, Nearest(R))
  */
 
-static Node *LongEdgeNode()
+static Node *LongEdgeNode(void)
 {
     Node *N, *R = 0;
     int MaxG = INT_MIN, G, i;

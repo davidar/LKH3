@@ -29,7 +29,7 @@
  *  The sequence of chosen nodes constitutes the initial tour.
  */
 
-void ChooseInitialTour()
+void ChooseInitialTour(void)
 {
     Node *N, *NextN, *FirstAlternative, *Last;
     Candidate *NN;

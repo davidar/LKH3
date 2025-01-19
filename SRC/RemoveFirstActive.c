@@ -10,7 +10,7 @@
  * The list must not be empty before the call. 
  */
 
-Node *RemoveFirstActive()
+Node *RemoveFirstActive(void)
 {
     Node *N = FirstActive;
     if (FirstActive == LastActive)

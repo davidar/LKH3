@@ -10,7 +10,7 @@
  *     Computers & Industrial Engineering 90, pp. 390–401, 2015.  
  */
 
-GainType MTSP_InitialTour()
+GainType MTSP_InitialTour(void)
 {
     Node *N, *Last, *Winner, *Route;
     GainType Cost = 0;

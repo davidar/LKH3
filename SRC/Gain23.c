@@ -34,7 +34,7 @@
    A detailed description of the different cases can be found after the code.
  */
 
-GainType Gain23()
+GainType Gain23(void)
 {
     static Node *s1 = 0;
     static short OldReversed = 0;

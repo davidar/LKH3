@@ -18,7 +18,7 @@
 #include <sys/time.h>
 #include <sys/resource.h>
 
-double GetTime()
+double GetTime(void)
 {
     struct rusage ru;
     getrusage(RUSAGE_SELF, &ru);
@@ -29,7 +29,7 @@ double GetTime()
 
 #include <time.h>
 
-double GetTime()
+double GetTime(void)
 {
     return (double) clock() / CLOCKS_PER_SEC;
 }

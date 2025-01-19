@@ -25,7 +25,7 @@ static void splice(edge * a, edge * b, point * v);
 static edge *make_edge(point * u, point * v);
 
 static void alloc_memory(int n);
-static edge *get_edge();
+static edge *get_edge(void);
 static void free_edge(edge * e);
 
 static void divide(point * p_sorted[], int l, int r, edge ** l_ccw,
@@ -482,14 +482,14 @@ static void alloc_memory(int n)
         free_list_e[i] = e;
 }
 
-void free_memory()
+void free_memory(void)
 {
     free(p_array);
     free(e_array);
     free(free_list_e);
 }
 
-static edge *get_edge()
+static edge *get_edge(void)
 {
     assert(n_free_e > 0);
     return (free_list_e[--n_free_e]);

@@ -11,7 +11,7 @@
 
 #define Free(s) { free(s); s = 0; }
 
-void AllocateStructures()
+void AllocateStructures(void)
 {
     int i, K;
 
@@ -68,7 +68,7 @@ void AllocateStructures()
  * The AllocateSegments function allocates the segments of the two-level tree.
  */
 
-void AllocateSegments()
+void AllocateSegments(void)
 {
     Segment *S = 0, *SPrev;
     SSegment *SS = 0, *SSPrev;

@@ -17,7 +17,7 @@
  * tour are moved to the start of the table.                         
  */
 
-void AdjustCandidateSet()
+void AdjustCandidateSet(void)
 {
     Candidate *NFrom, *NN, Temp;
     Node *From = FirstNode, *To;

@@ -1,6 +1,6 @@
 #include "LKH.h"
 
-void TSPTW_Reduce()
+void TSPTW_Reduce(void)
 {
     int i, j, k, n = DimensionSaved;
     char **R;

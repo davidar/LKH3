@@ -3,7 +3,7 @@
 
 #define InDegree V
 
-GainType SOP_RepairTour()
+GainType SOP_RepairTour(void)
 {
     Node **Fringe, *First = 0, *Last, *N;
     int FringeNodes = 0, Forward, Min, i, j;

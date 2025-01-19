@@ -9,7 +9,7 @@
  * The function is called from FindTour and OrderCandidates.
  */
 
-void ResetCandidateSet()
+void ResetCandidateSet(void)
 {
     Node *From;
     Candidate *NFrom, *NN, Temp;

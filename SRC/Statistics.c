@@ -5,7 +5,7 @@ static GainType CostMin, CostMax, CostSum;
 static GainType PenaltyMin, PenaltyMax, PenaltySum;
 static double TimeMin, TimeMax, TimeSum;
 
-void InitializeStatistics()
+void InitializeStatistics(void)
 {
     TrialSum = Successes = Updates = 0;
     CostSum = 0;
@@ -52,7 +52,7 @@ void UpdateStatistics(GainType Cost, double Time)
     Updates++;
 }
 
-void PrintStatistics()
+void PrintStatistics(void)
 {
     int _Runs = Updates;
     int _TrialsMin = TrialsMin;

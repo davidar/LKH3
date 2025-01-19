@@ -19,7 +19,7 @@
  * sparse graph.         
  */
 
-GainType Ascent()
+GainType Ascent(void)
 {
     Node *t;
     GainType BestW, W, W0, Alpha, MaxAlpha;

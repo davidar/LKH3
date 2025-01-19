@@ -4,7 +4,7 @@
  * general colored TSP.
  */
 
-GainType GCTSP_InitialTour()
+GainType GCTSP_InitialTour(void)
 {
     Node *N;
     GainType Cost;

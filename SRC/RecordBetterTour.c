@@ -13,7 +13,7 @@
  * been doubled.
  */
 
-void RecordBetterTour()
+void RecordBetterTour(void)
 {
     Node *N = FirstNode, *Stop = N;
 

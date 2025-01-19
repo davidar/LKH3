@@ -1,7 +1,7 @@
 #include "LKH.h"
 #include "Segment.h"
 
-GainType Penalty_TSPTW()
+GainType Penalty_TSPTW(void)
 {
     Node *N = Depot, *NextN = 0;
     GainType Sum = 0, P = 0;

@@ -5,7 +5,7 @@
  * colored TSP.
  */
 
-GainType CTSP_InitialTour()
+GainType CTSP_InitialTour(void)
 {
     Node *N, *NextN;
     GainType Cost;

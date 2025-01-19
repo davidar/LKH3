@@ -22,7 +22,7 @@ static Node **KDTree;
 static GainType GlobalBestCost, OldGlobalBestCost;
 static int CurrentSubproblem, Subproblems;
 
-void SolveKarpSubproblems()
+void SolveKarpSubproblems(void)
 {
     Node *N;
     double EntryTime = GetTime();

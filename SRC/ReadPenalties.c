@@ -16,7 +16,7 @@
  * The function is called from the CreateCandidateSet function. 
  */
 
-int ReadPenalties()
+int ReadPenalties(void)
 {
     int i, Id;
     Node *Na, *Nb = 0;

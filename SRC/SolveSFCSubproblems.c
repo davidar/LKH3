@@ -17,7 +17,7 @@
  * used as a starting point for the first segment. 
  */
 
-void SolveSFCSubproblems()
+void SolveSFCSubproblems(void)
 {
     Node *FirstNodeSaved, *N;
     int CurrentSubproblem, Subproblems, Round, i;

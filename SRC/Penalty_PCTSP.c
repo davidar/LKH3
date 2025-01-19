@@ -1,10 +1,10 @@
 #include "LKH.h"
 #include "Segment.h"
 
-static GainType Penalty_PCTSP_GCTSP();
-static GainType Penalty_PCTSP_SOP();
+static GainType Penalty_PCTSP_GCTSP(void);
+static GainType Penalty_PCTSP_SOP(void);
 
-GainType Penalty_PCTSP()
+GainType Penalty_PCTSP(void)
 {
     GainType P_GCTSP = Penalty_PCTSP_GCTSP();
     if (P_GCTSP > CurrentPenalty)
@@ -12,7 +12,7 @@ GainType Penalty_PCTSP()
     return P_GCTSP + Penalty_PCTSP_SOP();
 }
 
-GainType Penalty_PCTSP_GCTSP()
+GainType Penalty_PCTSP_GCTSP(void)
 {
     static Node* StartRoute = 0;
     Node* N, * N1, * N2, * CurrentRoute;
@@ -46,7 +46,7 @@ GainType Penalty_PCTSP_GCTSP()
     return P;
 }
 
-static GainType Penalty_PCTSP_SOP()
+static GainType Penalty_PCTSP_SOP(void)
 {
     Node *N;
     GainType P = 0, i = 1, j;

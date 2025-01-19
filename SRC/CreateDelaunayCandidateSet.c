@@ -10,7 +10,7 @@
 
 static int Level = 0;
 
-void CreateDelaunayCandidateSet()
+void CreateDelaunayCandidateSet(void)
 {
     Node *From, *To;
     point *u, *v;

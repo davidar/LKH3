@@ -6,7 +6,7 @@ static int max(int a, int b)
     return a > b ? a : b;
 }
 
-void PDPTW_Reduce()
+void PDPTW_Reduce(void)
 {
     const int M = INT_MAX / 2 / Precision;
     int i, j;

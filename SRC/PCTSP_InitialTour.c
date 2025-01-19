@@ -6,7 +6,7 @@
 
 #define InDegree V
 
-GainType PCTSP_InitialTour()
+GainType PCTSP_InitialTour(void)
 {
     Node *N, *NextN, *Start;
     GainType Cost;

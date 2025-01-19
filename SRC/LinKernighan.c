@@ -11,7 +11,7 @@
  * The function returns the cost of the resulting tour.
  */
 
-GainType LinKernighan()
+GainType LinKernighan(void)
 {
     GainType Cost, Gain, G0;
     int X2, i, it = 0;

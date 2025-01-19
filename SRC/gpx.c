@@ -1,6 +1,6 @@
 /*****************************************************************************\
 *                Generalized Partition Crossover 2                            *
-*                                                                             *	
+*                                                                             *
 * Reference:  R.Tinos, D. Whitley, and G. Ochoa (2017).                       *
 * A new generalized partition crossover for the traveling salesman problem:   *
 * tunneling between local optima.                                             *
@@ -1238,6 +1238,8 @@ int testUnfeasibleComp(int *sol_blue)
     comp_seq = alloc_vectori(n); // sequence of all entries in unfeasible
                                  // components in the order given by sol_blue
     inp_comp_seq = alloc_vectori(n_cand);
+    for (i = 0; i < n_cand; i++)
+        inp_comp_seq[i] = 0;
     // records the number of entries in
     // each component in comp_seq
     // creating comp_seq
@@ -1827,4 +1829,5 @@ void compCon(Graph * g, int *vector_comp)
             components++;
         }
     }
+    free(color);
 }

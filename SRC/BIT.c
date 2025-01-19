@@ -62,7 +62,7 @@ void BIT_Make(int Size)
     L = (int *) malloc((n + 1) * sizeof(int));
 }
 
-static void Build()
+static void Build(void)
 {
     int i, i1;
     for (i = 1; i <= n; i++) {
@@ -107,7 +107,7 @@ static int BIT_Max(int i, int j)
     return vmax;
 }
 
-void BIT_Update()
+void BIT_Update(void)
 {
     if (ProblemType != ONE_PDTSP)
         return;

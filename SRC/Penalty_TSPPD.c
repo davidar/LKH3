@@ -1,7 +1,7 @@
 #include "LKH.h"
 #include "Segment.h"
 
-GainType Penalty_TSPPD()
+GainType Penalty_TSPPD(void)
 {
     Node *N;
     GainType P = 0;

@@ -7,7 +7,7 @@
  * The function is called from GenerateCandidateSet and OrderCandidateSet.  
 */
 
-void AddTourCandidates()
+void AddTourCandidates(void)
 {
     Node *Na, *Nb;
     int i, d, Subproblem = FirstNode->Subproblem;

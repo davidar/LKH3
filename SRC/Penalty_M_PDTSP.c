@@ -1,7 +1,7 @@
 #include "LKH.h"
 #include "Segment.h"
 
-GainType Penalty_M_PDTSP()
+GainType Penalty_M_PDTSP(void)
 {
     Node *N;
     GainType P = 0;

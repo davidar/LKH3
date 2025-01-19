@@ -9,7 +9,7 @@
  * A call of the function corrupts the segment list representation.   
  */
 
-void NormalizeNodeList()
+void NormalizeNodeList(void)
 {
     Node *t1, *t2;
 

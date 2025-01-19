@@ -27,7 +27,7 @@ static void MakeSubproblem(double XMin, double XMax, double YMin,
 static int Size;
 static Node **KDTree;
 
-void SolveRoheSubproblems()
+void SolveRoheSubproblems(void)
 {
     Node *N;
     int CurrentSubproblem, Subproblems, Remaining, i;

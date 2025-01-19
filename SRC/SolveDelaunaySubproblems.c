@@ -17,7 +17,7 @@
 
 static int DelaunayClustering(int MaxClusterSize);
 
-void SolveDelaunaySubproblems()
+void SolveDelaunaySubproblems(void)
 {
     Node *N;
     GainType GlobalBestCost, OldGlobalBestCost;

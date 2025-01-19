@@ -15,7 +15,7 @@
  * The function is called from the CreateCandidateSet function. 
  */
 
-void WriteCandidates()
+void WriteCandidates(void)
 {
     FILE *CandidateFile;
     int i, Count;

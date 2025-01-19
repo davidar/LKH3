@@ -15,7 +15,7 @@
  *      salesman problem: tunneling between local optima.
  */
 
-GainType MergeWithTourGPX2()
+GainType MergeWithTourGPX2(void)
 {
     int NewDimension = 0;
     GainType Cost1 = 0, ShrunkCost1 = 0, ShrunkCost2 = 0, NewCost;

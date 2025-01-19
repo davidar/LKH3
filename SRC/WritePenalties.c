@@ -14,7 +14,7 @@
  * The function is called from the CreateCandidateSet function. 
  */
 
-void WritePenalties()
+void WritePenalties(void)
 {
     Node *N;
 

@@ -77,7 +77,7 @@ void HeapSiftDown(Node * N)
  * is empty).
  */
 
-Node *HeapDeleteMin()
+Node *HeapDeleteMin(void)
 {
     Node *Remove;
 
@@ -138,7 +138,7 @@ void HeapLazyInsert(Node * N)
  * The Heapify function constructs a heap from its nodes.
  */
 
-void Heapify()
+void Heapify(void)
 {
     int Loc;
     for (Loc = HeapCount / 2; Loc >= 1; Loc--)
@@ -149,7 +149,7 @@ void Heapify()
  * The HeapClear function empties the heap
  */
 
-void HeapClear()
+void HeapClear(void)
 {
     while (HeapCount > 0)
         Heap[HeapCount--]->Loc = 0;

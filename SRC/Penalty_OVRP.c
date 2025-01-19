@@ -1,7 +1,7 @@
 #include "LKH.h"
 #include "Segment.h"
 
-GainType Penalty_OVRP()
+GainType Penalty_OVRP(void)
 {
     static Node *StartRoute = 0;
     Node *N, *NextN, *CurrentRoute;

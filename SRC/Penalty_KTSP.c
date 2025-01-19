@@ -1,7 +1,7 @@
 #include "LKH.h"
 #include "Segment.h"
 
-GainType Penalty_KTSP() {
+GainType Penalty_KTSP(void) {
     int Size = 0;
     GainType CostSum = 0;
     int Forward = SUCC(Depot)->Id != Depot->Id + DimensionSaved;

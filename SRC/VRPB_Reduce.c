@@ -1,6 +1,6 @@
 #include "LKH.h"
 
-void VRPB_Reduce()
+void VRPB_Reduce(void)
 {
     int i, j, n = Dim;
     const int M = INT_MAX / 2 / Precision;

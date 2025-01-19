@@ -16,7 +16,7 @@
 
 static void KCenterClustering(int K);
 
-void SolveKCenterSubproblems()
+void SolveKCenterSubproblems(void)
 {
     Node *N;
     GainType GlobalBestCost, OldGlobalBestCost;

@@ -1,7 +1,7 @@
 #include "LKH.h"
 #include "Segment.h"
 
-GainType Penalty_CTSP_D()
+GainType Penalty_CTSP_D(void)
 {
     Node *N;
     int *Frq, NLoop, p, i;

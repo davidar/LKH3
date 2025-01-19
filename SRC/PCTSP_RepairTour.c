@@ -4,7 +4,7 @@
 
 #define InDegree V
 
-GainType PCTSP_RepairTour()
+GainType PCTSP_RepairTour(void)
 {
     int Min = INT_MAX, i = 1;
     Node *N1, *N2, *N, *CurrentRoute;

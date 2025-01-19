@@ -10,7 +10,7 @@
  * The function is called from LinKernighan.   
  */
 
-void NormalizeSegmentList()
+void NormalizeSegmentList(void)
 {
     Segment *s1, *s2;
 

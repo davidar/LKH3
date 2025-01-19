@@ -46,7 +46,7 @@ static int compareCost(const void *Na, const void *Nb);
 static int EdgesInFragments;
 static GainType Cost;
 
-GainType GreedyTour()
+GainType GreedyTour(void)
 {
     Node *From, *To, *First, *Last = 0, **Perm;
     int Count, i;

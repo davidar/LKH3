@@ -423,7 +423,7 @@ static int TwoDWeightType(void);
 static int ThreeDWeightType(void);
 static void Convert2FullMatrix(void);
 
-void ReadProblem()
+void ReadProblem(void)
 {
     int i, j, K;
     char *Line, *Keyword;
@@ -912,7 +912,7 @@ void ReadProblem()
     LastLine = 0;
 }
 
-static int TwoDWeightType()
+static int TwoDWeightType(void)
 {
     if (Asymmetric)
         return 0;
@@ -925,7 +925,7 @@ static int TwoDWeightType()
         (WeightType == SPECIAL && CoordType == TWOD_COORDS);
 }
 
-static int ThreeDWeightType()
+static int ThreeDWeightType(void)
 {
     if (Asymmetric)
         return 0;
@@ -936,7 +936,7 @@ static int ThreeDWeightType()
         (WeightType == SPECIAL && CoordType == THREED_COORDS);
 }
 
-static void CheckSpecificationPart()
+static void CheckSpecificationPart(void)
 {
     if (ProblemType == -1)
         eprintf("TYPE is missing");
@@ -1015,7 +1015,7 @@ static char *Copy(char *S)
     return Buffer;
 }
 
-static void CreateNodes()
+static void CreateNodes(void)
 {
     Node *Prev = 0, *N = 0;
     int i;
@@ -1067,14 +1067,14 @@ static int FixEdge(Node * Na, Node * Nb)
     return 1;
 }
 
-static void Read_NAME()
+static void Read_NAME(void)
 {
     free(Name);
     if (!(Name = Copy(strtok(0, Delimiters))))
         eprintf("NAME: string expected");
 }
 
-static void Read_BACKHAUL_SECTION()
+static void Read_BACKHAUL_SECTION(void)
 {
     int Id;
 
@@ -1086,7 +1086,7 @@ static void Read_BACKHAUL_SECTION()
     }
 }
 
-static void Read_CAPACITY()
+static void Read_CAPACITY(void)
 {
     char *Token = strtok(0, Delimiters);
 
@@ -1094,7 +1094,7 @@ static void Read_CAPACITY()
         eprintf("CAPACITY: Integer expected");
 }
 
-static void Read_CTSP_SET_SECTION()
+static void Read_CTSP_SET_SECTION(void)
 {   
     Node *N;
     int Id, n, *ColorUsed;
@@ -1128,7 +1128,7 @@ static void Read_CTSP_SET_SECTION()
     free(ColorUsed);
 }
 
-static void Read_DEMAND_DIMENSION()
+static void Read_DEMAND_DIMENSION(void)
 {
     char *Token = strtok(0, Delimiters);
 
@@ -1138,7 +1138,7 @@ static void Read_DEMAND_DIMENSION()
         eprintf("DIMENSION_DIMENSION: < 0");
 }
 
-static void Read_DEMAND_SECTION()
+static void Read_DEMAND_SECTION(void)
 {
     int Id, Demand, i, k;
     Node *N;
@@ -1180,7 +1180,7 @@ static void Read_DEMAND_SECTION()
     }
 }
 
-static void Read_DEPOT_SECTION()
+static void Read_DEPOT_SECTION(void)
 {
     int i;
     if (!fscanint(ProblemFile, &MTSPDepot))
@@ -1191,7 +1191,7 @@ static void Read_DEPOT_SECTION()
         eprintf("DEPOT_SECTION: Only one depot allowed");
 }
 
-static void Read_DIMENSION()
+static void Read_DIMENSION(void)
 {
     char *Token = strtok(0, Delimiters);
 
@@ -1202,7 +1202,7 @@ static void Read_DIMENSION()
     DimensionSaved = Dim = Dimension;
 }
 
-static void Read_DISPLAY_DATA_SECTION()
+static void Read_DISPLAY_DATA_SECTION(void)
 {
     Node *N;
     int Id, i;
@@ -1251,7 +1251,7 @@ static void Read_DISPLAY_DATA_SECTION()
         Dimension++;
 }
 
-static void Read_DISPLAY_DATA_TYPE()
+static void Read_DISPLAY_DATA_TYPE(void)
 {
     unsigned int i;
 
@@ -1266,7 +1266,7 @@ static void Read_DISPLAY_DATA_TYPE()
         eprintf("Unknown DISPLAY_DATA_TYPE: %s", DisplayDataType);
 }
 
-static void Read_DISTANCE()
+static void Read_DISTANCE(void)
 {
     char *Token = strtok(0, Delimiters);
 
@@ -1274,7 +1274,7 @@ static void Read_DISTANCE()
         eprintf("DISTANCE: real expected");
 }
 
-static void Read_DRAFT_LIMIT_SECTION()
+static void Read_DRAFT_LIMIT_SECTION(void)
 {
     int Id, i;
     Node *N;
@@ -1291,7 +1291,7 @@ static void Read_DRAFT_LIMIT_SECTION()
     }
 }
 
-static void Read_EDGE_DATA_FORMAT()
+static void Read_EDGE_DATA_FORMAT(void)
 {
     unsigned int i;
 
@@ -1308,7 +1308,7 @@ static void Read_EDGE_DATA_FORMAT()
                 "cannot be used together with SUBPROBLEM_TOUR_FILE");
 }
 
-static void Read_EDGE_DATA_SECTION()
+static void Read_EDGE_DATA_SECTION(void)
 {
     Node *Ni, *Nj;
     int i, j, W = 0, WithWeights = 0, FirstLine = 1;
@@ -1402,7 +1402,7 @@ static void Read_EDGE_DATA_SECTION()
     Distance = WithWeights ? Distance_LARGE : Distance_1;
 }
 
-static void Read_EDGE_WEIGHT_FORMAT()
+static void Read_EDGE_WEIGHT_FORMAT(void)
 {
     unsigned int i;
 
@@ -1435,7 +1435,7 @@ static void Read_EDGE_WEIGHT_FORMAT()
         eprintf("Unknown EDGE_WEIGHT_FORMAT: %s", EdgeWeightFormat);
 }
 
-static void Read_EDGE_WEIGHT_SECTION()
+static void Read_EDGE_WEIGHT_SECTION(void)
 {
     Node *Ni;
     int i, j, n, W;
@@ -1632,7 +1632,7 @@ static void Read_EDGE_WEIGHT_SECTION()
     }
 }
 
-static void Read_EDGE_WEIGHT_TYPE()
+static void Read_EDGE_WEIGHT_TYPE(void)
 {
     unsigned int i;
 
@@ -1746,7 +1746,7 @@ static void Read_EDGE_WEIGHT_TYPE()
         eprintf("Unknown EDGE_WEIGHT_TYPE: %s", EdgeWeightType);
 }
 
-static void Read_FIXED_EDGES_SECTION()
+static void Read_FIXED_EDGES_SECTION(void)
 {
     Node *Ni, *Nj, *N, *NPrev = 0, *NNext;
     int i, j, Count = 0;
@@ -1789,7 +1789,7 @@ static void Read_FIXED_EDGES_SECTION()
         Dimension++;
 }
 
-static void Read_GRID_SIZE()
+static void Read_GRID_SIZE(void)
 {
     char *Token = strtok(0, Delimiters);
 
@@ -1799,7 +1799,7 @@ static void Read_GRID_SIZE()
         eprintf("GRID_SIZE: non-negative real expected");
 }
 
-static void Read_GROUPS()
+static void Read_GROUPS(void)
 {
     char *Token = strtok(0, Delimiters);
 
@@ -1809,7 +1809,7 @@ static void Read_GROUPS()
         eprintf("GROUPS: non-negative integer expected");
 }
 
-static void Read_GROUP_SECTION()
+static void Read_GROUP_SECTION(void)
 {
     Node *N;
     int Id, n, *GroupUsed;
@@ -1843,7 +1843,7 @@ static void Read_GROUP_SECTION()
     free(GroupUsed);
 }
 
-static void Read_GCTSP_SECTION()
+static void Read_GCTSP_SECTION(void)
 {
     int i, j, b;
 
@@ -1867,7 +1867,7 @@ static void Read_GCTSP_SECTION()
     }
 }
 
-static void Read_GCTSP_SET_SECTION()
+static void Read_GCTSP_SET_SECTION(void)
 {
     int n, Id, Count;
     char *ColorUsed;
@@ -1904,7 +1904,7 @@ static void Read_GCTSP_SET_SECTION()
     free(ColorUsed);
 }
 
-static void Read_GVRP_SETS()
+static void Read_GVRP_SETS(void)
 {
     char *Token = strtok(0, Delimiters);
 
@@ -1914,7 +1914,7 @@ static void Read_GVRP_SETS()
         eprintf("GVRP_SETS: not positive");
 }
 
-static void Read_GVRP_SET_SECTION()
+static void Read_GVRP_SET_SECTION(void)
 {
     int Id, n;
     Node *N;
@@ -1957,7 +1957,7 @@ static void Read_GVRP_SET_SECTION()
     free(ColorUsed);
 }
 
-static void Read_NODE_COORD_SECTION()
+static void Read_NODE_COORD_SECTION(void)
 {
     Node *N;
     int Id, i;
@@ -2011,7 +2011,7 @@ static void Read_NODE_COORD_SECTION()
         Convert2FullMatrix();
 }
 
-static void Read_NODE_COORD_TYPE()
+static void Read_NODE_COORD_TYPE(void)
 {
     unsigned int i;
 
@@ -2030,7 +2030,7 @@ static void Read_NODE_COORD_TYPE()
         eprintf("Unknown NODE_COORD_TYPE: %s", NodeCoordType);
 }
 
-static void Read_PICKUP_AND_DELIVERY_SECTION()
+static void Read_PICKUP_AND_DELIVERY_SECTION(void)
 {
     int Id, i;
     Node *N = FirstNode;
@@ -2097,7 +2097,7 @@ static void Read_PICKUP_AND_DELIVERY_SECTION()
     }
 }
 
-static void Read_RELAXATION_LEVEL()
+static void Read_RELAXATION_LEVEL(void)
 {
     char *Token = strtok(0, Delimiters);
 
@@ -2126,7 +2126,7 @@ static void Read_REQUIRED_NODES_SECTION(void)
     }
 }
 
-static void Read_TIME_WINDOW_SECTION()
+static void Read_TIME_WINDOW_SECTION(void)
 {
     int Id, i;
     Node *N = FirstNode;
@@ -2295,7 +2295,7 @@ static void Read_TOUR_SECTION(FILE ** File)
         printff("done\n");
 }
 
-static void Read_TYPE()
+static void Read_TYPE(void)
 {
     unsigned int i;
 
@@ -2436,7 +2436,7 @@ static void Read_TYPE()
         MTSPObjective == MINMAX_SIZE;
 }
 
-static void Read_SERVICE_TIME()
+static void Read_SERVICE_TIME(void)
 {
     char *Token = strtok(0, Delimiters);
 
@@ -2446,7 +2446,7 @@ static void Read_SERVICE_TIME()
         eprintf("SERVICE_TIME: < 0");
 }
 
-static void Read_SERVICE_TIME_SECTION()
+static void Read_SERVICE_TIME_SECTION(void)
 {
     int Id, i;
     Node *N;
@@ -2546,7 +2546,7 @@ void ReadTour(char *FileName, FILE ** File)
     fclose(*File);
 }
 
-static void Read_RISK_THRESHOLD()
+static void Read_RISK_THRESHOLD(void)
 {
     char *Token = strtok(0, Delimiters);
 
@@ -2554,7 +2554,7 @@ static void Read_RISK_THRESHOLD()
         eprintf("RISK_THRESHOLD: Integer expected");
 }
 
-static void Read_SALESMEN()
+static void Read_SALESMEN(void)
 {
     char *Token = strtok(0, Delimiters);
 
@@ -2564,7 +2564,7 @@ static void Read_SALESMEN()
         eprintf("SALESMEN/VEHICLES: <= 0");
 }
 
-static void Read_SCALE()
+static void Read_SCALE(void)
 {
     char *Token = strtok(0, Delimiters);
 
@@ -2574,7 +2574,7 @@ static void Read_SCALE()
         eprintf("SCALE: < 1");
 }
 
-static void Convert2FullMatrix()
+static void Convert2FullMatrix(void)
 {
     int n = DimensionSaved, i, j;
     Node *Ni, *Nj;

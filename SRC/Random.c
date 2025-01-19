@@ -23,7 +23,7 @@ void SRandom(unsigned Seed);
 
 #ifdef STDLIB_RANDOM
 #include <stdlib.h>
-unsigned Random()
+unsigned Random(void)
 {
     return rand();
 }
@@ -40,7 +40,7 @@ void SRandom(unsigned Seed)
 
 static int a = 0, b = 24, arr[55], initialized = 0;
 
-unsigned Random()
+unsigned Random(void)
 {
     int t;
 

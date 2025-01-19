@@ -6,7 +6,7 @@
  * standard output.
  */
 
-void PrintParameters()
+void PrintParameters(void)
 {
     int i;
 

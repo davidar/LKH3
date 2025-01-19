@@ -1,7 +1,7 @@
 #include "LKH.h"
 #include "Segment.h"
 
-GainType Penalty_CTSP()
+GainType Penalty_CTSP(void)
 {
     static Node *StartRoute = 0;
     Node *N, *N1, *N2, *CurrentRoute;

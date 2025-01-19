@@ -3,7 +3,7 @@
 
 static int DemandSum;
 
-GainType Penalty_TSPDL()
+GainType Penalty_TSPDL(void)
 {
     Node *N = Depot, *NextN;
     GainType P = 0;
