@@ -8,7 +8,7 @@ struct rec {
     rec *ptP, *ptN, *pt2P, *pt2N;
     rec *ptC, *pt1C, *pt21, *pt22, *ptCC, *ptE;
     rec *ptbufP, *ptbufN, *ptbufPsaved, *ptbufNsaved;
-    double len, lenbuf, len2;
+    double len, len2;
     long long diftag;
 };
 

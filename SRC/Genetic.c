@@ -141,7 +141,7 @@ int LinearSelection(int Size, double Bias)
 
 /*
  * The MergeTourWithIndividual function attempts to find a short tour by
- * merging the current tour with a specified inddividual of the population.
+ * merging the current tour with a specified individual of the population.
  */
 
 GainType MergeTourWithIndividual(int i)

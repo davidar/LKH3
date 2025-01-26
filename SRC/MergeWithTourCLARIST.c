@@ -555,7 +555,6 @@ void generate_offspring(void)
                 do {
                     ptcur->ptbufP = ptcur->pt2P;
                     ptcur->ptbufN = ptcur->pt2N;
-                    ptcur->lenbuf = ptcur->len2;
                     ptcur = ptcur->ptP;
                 } while (ptcur != ptlas);
                 ptcur = pt1C;
