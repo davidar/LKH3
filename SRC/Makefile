@@ -5,9 +5,8 @@ TREE_TYPE = TWO_LEVEL_TREE
 # CC = gcc
 IDIR = INCLUDE
 ODIR = OBJ
-CFLAGS = -O3 -Wall -I$(IDIR) -D$(TREE_TYPE) -g -flto -fcommon
-# CFLAGS = -O3 -Wall -I$(IDIR) -D$(TREE_TYPE) -g -fcommon
-# CFLAGS = -O3 -Wall -I$(IDIR) -D$(TREE_TYPE) -g -flto -zmuldefs
+CFLAGS = -O3 -Wall -I$(IDIR) -D$(TREE_TYPE) -g -fcommon
+# CFLAGS = -O3 -Wall -I$(IDIR) -D$(TREE_TYPE) -g -zmuldefs
 
 _DEPS = Delaunay.h GainType.h Genetic.h GeoConversion.h Hashing.h      \
         Heap.h LKH.h Segment.h Sequence.h BIT.h gpx.h CLARIST.h
