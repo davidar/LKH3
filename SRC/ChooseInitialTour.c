@@ -96,6 +96,8 @@ void ChooseInitialTour(void)
             break;
     }
     while ((N = N->Suc) != FirstNode);
+    if (Dimension == 2 * DimensionSaved && N->Id <= DimensionSaved)
+        N += DimensionSaved;
     FirstNode = N;
 
     /* Move nodes with two incident fixed or common candidate edges in

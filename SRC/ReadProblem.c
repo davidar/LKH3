@@ -545,46 +545,8 @@ void ReadProblem(void)
         MTSPDepot = Dimension;
         Depot = &NodeSet[Dimension];
     }
-    if (Seed == 0)
-        Seed = (unsigned) (time(0) * (size_t) (&Seed));
-    if (Precision == 0)
-        Precision = 100;
-    if (InitialStepSize == 0)
-        InitialStepSize = 1;
-    if (MaxSwaps < 0)
-        MaxSwaps = Dimension;
-    if (KickType > Dimension / 2)
-        KickType = Dimension / 2;
-    if (Runs == 0)
-        Runs = 10;
-    if (MaxCandidates > Dimension - 1)
-        MaxCandidates = Dimension - 1;
-    if (ExtraCandidates > Dimension - 1)
-        ExtraCandidates = Dimension - 1;
-    if (Scale < 1)
-        Scale = 1;
-    if (SubproblemSize >= Dimension)
-        SubproblemSize = Dimension;
-    else if (SubproblemSize == 0) {
-        if (AscentCandidates > Dimension - 1)
-            AscentCandidates = Dimension - 1;
-        if (InitialPeriod < 0) {
-            InitialPeriod = Dimension / 2;
-            if (InitialPeriod < 100)
-                InitialPeriod = 100;
-        }
-        if (Excess < 0)
-            Excess = 1.0 / DimensionSaved * Salesmen;
-        if (MaxTrials == -1)
-            MaxTrials = Dimension;
-        HeapMake(Dimension);
-    }
-    if (POPMUSIC_MaxNeighbors > Dimension - 1)
-        POPMUSIC_MaxNeighbors = Dimension - 1;
-    if (POPMUSIC_SampleSize > Dimension)
-        POPMUSIC_SampleSize = Dimension;
     Depot = &NodeSet[MTSPDepot];
-    if (ProblemType == CVRP ||
+    if (ProblemType == CVRP || ProblemType == CVRPTW ||
         ProblemType == CluVRP || ProblemType == SoftCluVRP) {
         Node *N;
         int MinSalesmen;
@@ -599,14 +561,32 @@ void ReadProblem(void)
             TotalDemand / Capacity + (TotalDemand % Capacity != 0);
         if (Salesmen == 1) {
             Salesmen = MinSalesmen;
-            if (Salesmen > Dimension)
-                eprintf("CVRP: SALESMEN larger than DIMENSION");
+            if (ProblemType == CVRPTW && Salesmen > 1) {
+                DimensionSaved = Dim + Salesmen - 1;
+                Dimension = 2 * DimensionSaved;
+                Node *N, *Prev = 0;
+                NodeSet = (Node *)
+                    realloc(NodeSet, (1 + Dimension) * sizeof(Node));
+                for (i = 1; i <= Dimension; i++, Prev = N) {
+                    N = &NodeSet[i];
+                    if (i == 1)
+                        FirstNode = N;
+                    else
+                        Link(Prev, N);
+                    N->Id = N->OriginalId = i;
+                }
+                Link(N, FirstNode);
+            }
         } else if (Salesmen < MinSalesmen)
-            eprintf("CVRP: SALESMEN too small to meet demand");
+            eprintf("%s: SALESMEN too small to meet demand",
+                    ProblemType == CVRP ? "CVRP" :
+                    ProblemType == CVRPTW ? "CVRPTW" :
+                    ProblemType == CluVRP ? "CluVRP" : "SoftCluVRP");
         assert(Salesmen >= 1 && Salesmen <= Dimension);
         if (Salesmen == 1 && ProblemType == CVRP)
             ProblemType = TSP;
-        Penalty = ProblemType == CVRP ? Penalty_CVRP : Penalty_CluVRP;
+        Penalty = ProblemType == CVRP ? Penalty_CVRP :
+                  ProblemType == CVRPTW ? Penalty_CVRPTW : Penalty_CluVRP;
     } else if (ProblemType == SOP || ProblemType == M1_PDTSP ||
                ProblemType == PCTSP) {
         Constraint *Con;
@@ -653,6 +633,46 @@ void ReadProblem(void)
         Penalty = ProblemType == SOP ? Penalty_SOP :
                   ProblemType == PCTSP ? Penalty_PCTSP : Penalty_M1_PDTSP;
     }
+    if (Asymmetric)
+        Convert2FullMatrix();
+    if (Seed == 0)
+        Seed = (unsigned) (time(0) * (size_t) (&Seed));
+    if (Precision == 0)
+        Precision = 100;
+    if (InitialStepSize == 0)
+        InitialStepSize = 1;
+    if (MaxSwaps < 0)
+        MaxSwaps = Dimension;
+    if (KickType > Dimension / 2)
+        KickType = Dimension / 2;
+    if (Runs == 0)
+        Runs = 10;
+    if (MaxCandidates > Dimension - 1)
+        MaxCandidates = Dimension - 1;
+    if (ExtraCandidates > Dimension - 1)
+        ExtraCandidates = Dimension - 1;
+    if (Scale < 1)
+        Scale = 1;
+    if (SubproblemSize >= Dimension)
+        SubproblemSize = Dimension;
+    else if (SubproblemSize == 0) {
+        if (AscentCandidates > Dimension - 1)
+            AscentCandidates = Dimension - 1;
+        if (InitialPeriod < 0) {
+            InitialPeriod = Dimension / 2;
+            if (InitialPeriod < 100)
+                InitialPeriod = 100;
+        }
+        if (Excess < 0)
+            Excess = 1.0 / DimensionSaved * Salesmen;
+        if (MaxTrials == -1)
+            MaxTrials = Dimension;
+        HeapMake(Dimension);
+    }
+    if (POPMUSIC_MaxNeighbors > Dimension - 1)
+        POPMUSIC_MaxNeighbors = Dimension - 1;
+    if (POPMUSIC_SampleSize > Dimension)
+        POPMUSIC_SampleSize = Dimension;
     if (ProblemType == TSPTW) {
         Salesmen = 1;
         Penalty = Penalty_TSPTW;
@@ -2007,8 +2027,6 @@ static void Read_NODE_COORD_SECTION(void)
                 N->Id);
     if (ProblemType == HPP)
         Dimension++;
-    if (Asymmetric)
-        Convert2FullMatrix();
 }
 
 static void Read_NODE_COORD_TYPE(void)
