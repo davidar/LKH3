@@ -633,7 +633,7 @@ void ReadProblem(void)
         Penalty = ProblemType == SOP ? Penalty_SOP :
                   ProblemType == PCTSP ? Penalty_PCTSP : Penalty_M1_PDTSP;
     }
-    if (Asymmetric)
+    if (Asymmetric && (CoordType == TWOD_COORDS || CoordType == THREED_COORDS))
         Convert2FullMatrix();
     if (Seed == 0)
         Seed = (unsigned) (time(0) * (size_t) (&Seed));
