@@ -25,18 +25,21 @@ void CandidateReport(void)
         Sum += Count;
         if (N->FixedTo1 && N->Id < N->FixedTo1->Id) {
             Fixed++;
-            Cost += Distance != Distance_1 ? Distance(N, N->FixedTo1) : 0;
+            Cost += Distance != Distance_1 ?
+                C(N, N->FixedTo1) - N->Pi - N->FixedTo1->Pi : 0;
         }
         if (N->FixedTo2 && N->Id < N->FixedTo2->Id) {
             Fixed++;
-            Cost += Distance != Distance_1 ? Distance(N, N->FixedTo2) : 0;
+            Cost += Distance != Distance_1 ?
+                C(N, N->FixedTo2) - N->Pi - N->FixedTo2->Pi : 0;
         }
     }
     while ((N = N->Suc) != FirstNode);
     printff("Cand.min = %d, Cand.avg = %0.1f, Cand.max = %d\n",
             Min, (double) Sum / Dimension, Max);
     if (Fixed > 0)
-        printff("Edges.fixed = %d [Cost = " GainFormat "]\n", Fixed, Cost);
+        printff("Edges.fixed = %d [Cost = " GainFormat "]\n", 
+                Fixed, Cost / Precision);
     if (MergeTourFiles >= 1) {
         Count = 0;
         N = FirstNode;
