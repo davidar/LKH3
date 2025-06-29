@@ -55,7 +55,6 @@ void WriteTour(char *FileName, int *Tour, GainType Cost)
         Tour[i < n ? i + 1 : 1] < Tour[i > 1 ? i - 1 : Dimension];
     if (ProblemType == CTSP_D)
         Forward = Best_CTSP_D_Direction(Tour);
-    i = 1;
     for (j = 1; j <= n; j++) {
         if ((a = Tour[i]) <= n)
             fprintf(TourFile, "%d\n", 

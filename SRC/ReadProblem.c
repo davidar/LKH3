@@ -614,8 +614,12 @@ void ReadProblem(void)
             }
         }
         for (j = 1; j <= Dim; j++) {
+            if (ProblemType == SOP && (j == 1 || j == Dim))
+                continue;
             Nj = &NodeSet[j];
             for (i = 1; i <= Dim; i++) {
+                if (ProblemType == SOP && (i == 1 || i == Dim))
+                    continue;
                 if (i != j && Nj->C[i] == -1) {
                     Ni = &NodeSet[i];
                     Con = (Constraint *) malloc(sizeof(Constraint));
@@ -761,7 +765,7 @@ void ReadProblem(void)
         NodeSet[i].DepotId = i - Dim + 1;
     if (Dimension != DimensionSaved && ProblemType != PCTSP) {
         NodeSet[Depot->Id + DimensionSaved].DepotId = 1;
-        for (i = Dim + 1; i <= Dim + Salesmen -1; i++)
+        for (i = Dim + 1; i <= Dim + Salesmen - 1; i++)
             NodeSet[i + DimensionSaved].DepotId = i - Dim + 1;
     }
     if (ProblemType == PCTSP) {

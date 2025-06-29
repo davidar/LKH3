@@ -163,8 +163,8 @@ GainType Ascent(void)
             } else {
                 if (TraceLevel >= 3)
                     printff
-                        ("  T = %d, Period = %d, P = %d, W = %0.1f, \
-                         Norm = %d\n",
+                        ("  T = %d, Period = %d, P = %d, W = %0.1f, "
+                         "Norm = %d\n",
                          T, Period, P, 
                          (ProblemType == MSCTSP ? -1 : 1) *
                          (double) W / Precision, Norm);
