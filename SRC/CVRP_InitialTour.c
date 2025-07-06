@@ -136,7 +136,7 @@ void CreateS(void)
     int Dim = Dimension - Salesmen + 1, i, j;
     Node *Ni, *Nj;
     SSize = 0;
-    S = (Saving *) malloc((Dim - 2) * (Dim - 1) / 2 * sizeof(Saving));
+    S = (Saving *) malloc((Dim - 2.0) * (Dim - 1.0) / 2 * sizeof(Saving));
     /* Compute savings */
     for (i = 1; i < Dim; i++) {
         Ni = &NodeSet[i];
